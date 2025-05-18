@@ -483,30 +483,35 @@ def main(page: ft.Page):
 
          if page.client_storage: page.update()
 
-    def view_pop(e: ft.ViewPopEvent):
-        # Check if there's more than one view to pop.
-        # If only one view (the root/home view) is present, popping it would lead to an empty stack,
-        # which is usually handled by navigating home directly.
-        
-        # Handle online game cleanup first if applicable
-        if e.view and e.view.route and e.view.route.startswith("/game/") and "/online/" in e.view.route:
-            print(f"Popping view from online game: {e.view.route}. Triggering go_home for cleanup.")
-            # go_home() will navigate to "/", which will also clear and rebuild views.
-            # We don't need to pop here manually as go_home will handle the navigation and view stack.
-            go_home() 
-            return # Exit after go_home because it handles navigation
+# app.py
 
-        # If not an online game view being popped, or if go_home wasn't called
-        if len(page.views) > 1: # Only pop if there's a view to go back to
-            page.views.pop()
-            top_view = page.views[-1] # This is now safe
-            page.go(top_view.route)
+    def view_pop(e: ft.ViewPopEvent):
+        # e.view is the view that Flet is trying to remove from the top of the stack.
+        # page.views still contains e.view at this point.
+        print(f"ViewPopEvent: Popping view with route '{e.view.route if e.view else 'N/A'}'. page.views count before internal pop: {len(page.views)}")
+
+        if e.view and e.view.route and e.view.route.startswith("/game/") and "/online/" in e.view.route:
+            print(f"Online game view pop: {e.view.route}. Triggering go_home.")
+            go_home() 
+            # go_home() calls page.go("/"), which fully handles the navigation and view stack reset.
+            # We must return here to prevent further processing in this view_pop handler.
+            return 
+
+        # For any other view being popped by browser back button:
+        # 1. Flet will remove e.view from page.views internally after this handler.
+        # 2. We need to navigate to the route of the view that will then be at the top.
+        
+        # Manually pop to see what the previous view would be
+        if len(page.views) > 0: # Check if there's anything to pop (safety)
+            page.views.pop() # Simulate Flet's pop to see the underlying view
+
+        if len(page.views) > 0: # If there's a view to go back to
+            previous_view_route = page.views[-1].route
+            print(f"Navigating to previous view: {previous_view_route}")
+            page.go(previous_view_route)
         else:
-            # If only one view is left (or somehow it's empty, though less likely now),
-            # or if the user is trying to "back" from the very first view,
-            # just go to the home page.
-            # This also handles the case where go_home() might have already cleared views.
-            print(f"View pop attempted on a shallow view stack (count: {len(page.views)}). Navigating to home.")
+            # If popping the last view (e.g., home page) or stack was already empty
+            print("View stack is or became empty. Navigating to home ('/').")
             page.go("/")
 
     page.on_route_change = route_change

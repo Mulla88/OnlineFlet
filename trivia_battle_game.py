@@ -469,7 +469,7 @@ def trivia_battle_online_logic(page: ft.Page, go_home_fn, send_action_fn, room_c
         question_display_online, 
         ft.Row([
             ft.Container(content=ft.Column([player_list_display, ft.Divider(), player_score_display_online]), # CHANGED to player_score_display_online
-                         padding=10, border=ft.border.all(1, ft.colors.OUTLINE), border_radius=5, width=280, margin=ft.margin.only(right=10)),
+                         padding=10, border=ft.border.all(1, "outline"), border_radius=5, width=280, margin=ft.margin.only(right=10)),
             ft.VerticalDivider(),
             ft.Container(content=action_area, padding=10, expand=True, alignment=ft.alignment.top_center)
         ], vertical_alignment=ft.CrossAxisAlignment.START, expand=True),

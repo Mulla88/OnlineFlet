@@ -246,7 +246,7 @@ def bedoon_kalam_offline_logic(page: ft.Page, go_home_fn):
 
             summary_column_content = ft.Column( # Renamed to avoid confusion
                 controls=[
-                    ft.Text(f"⏰ انتهى وقت فريق: {summary_team}", size=22, weight="bold", color=ft.colors.PRIMARY),
+                    ft.Text(f"⏰ انتهى وقت فريق: {summary_team}", size=22, weight="bold", color="primary"),
                     ft.Text("🔤 الكلمات التي ظهرت في هذا الدور:", size=20),
                 ] + word_list_controls,
                 scroll=ft.ScrollMode.AUTO,
@@ -438,7 +438,7 @@ def bedoon_kalam_online_logic(page: ft.Page, go_home_fn, send_action_fn, room_co
                 word_list_controls.append(ft.Text("لم يتم لعب أي كلمات في هذا الدور.", italic=True))
 
             action_area.controls.extend([
-                ft.Text(f"⏰ ملخص دور فريق: {summary_team} (الجولة {summary_round_num})", size=22, weight="bold", color=ft.colors.PRIMARY),
+                ft.Text(f"⏰ ملخص دور فريق: {summary_team} (الجولة {summary_round_num})", size=22, weight="bold", color="primary"),
                 ft.Text("🔤 الكلمات:", size=20),
             ] + word_list_controls)
             
@@ -522,7 +522,7 @@ def bedoon_kalam_online_logic(page: ft.Page, go_home_fn, send_action_fn, room_co
                         ft.Divider(),
                         team_score_display
                     ], spacing=10),
-                    padding=10, border=ft.border.all(1, ft.colors.OUTLINE), border_radius=5,
+                    padding=10, border=ft.border.all(1, "outline"), border_radius=5,
                     width=280, margin=ft.margin.only(right=10), alignment=ft.alignment.top_left,
                 ),
                 ft.VerticalDivider(width=10),

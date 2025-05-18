@@ -62,7 +62,7 @@ def mafia_offline_logic(page: ft.Page, go_home_fn):
                           'محقق': "تحقق من هوية لاعب كل ليلة (هل هو مافيا أم لا).", 
                           'مواطن': "اكتشف المافيا واطردهم في النهار."}
             offline_main_column.controls.extend([
-                ft.Text(f"{player_name}، دورك هو: {role}", size=22, weight="bold", color=ft.colors.PRIMARY),
+                ft.Text(f"{player_name}، دورك هو: {role}", size=22, weight="bold", color="primary"),
                 ft.Text(desc_map.get(role, ""), size=18, text_align=ft.TextAlign.CENTER),
             ])
             if role == "مافيا":

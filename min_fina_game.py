@@ -140,7 +140,7 @@ def min_fina_offline_logic(page: ft.Page, go_home_fn):
             if total_votes_cast > 0 and sorted_results and sorted_results[0][1] > 0:
                 max_vote_count = sorted_results[0][1]
                 most_voted_players = [name for name, count in sorted_results if count == max_vote_count]
-                offline_main_column.controls.append(ft.Text(f"الأكثر حصولاً على الأصوات: {', '.join(most_voted_players)}", size=20, weight="bold", color=ft.colors.PRIMARY))
+                offline_main_column.controls.append(ft.Text(f"الأكثر حصولاً على الأصوات: {', '.join(most_voted_players)}", size=20, weight="bold", color="primary"))
             else:
                  offline_main_column.controls.append(ft.Text("لم يتم تسجيل أي أصوات أو لا يوجد فائز واضح.", size=18))
             
@@ -317,7 +317,7 @@ def min_fina_online_logic(page: ft.Page, go_home_fn, send_action_fn, room_code: 
             if total_votes_cast_results > 0 and sorted_vote_results and sorted_vote_results[0][1] > 0:
                 max_vote_count_res = sorted_vote_results[0][1]
                 most_voted_players_res = [name for name, count in sorted_vote_results if count == max_vote_count_res]
-                action_area.controls.append(ft.Text(f"الأكثر حصولاً على الأصوات: {', '.join(most_voted_players_res)}", size=20, weight="bold", color=ft.colors.PRIMARY, text_align=ft.TextAlign.CENTER))
+                action_area.controls.append(ft.Text(f"الأكثر حصولاً على الأصوات: {', '.join(most_voted_players_res)}", size=20, weight="bold", color="primary", text_align=ft.TextAlign.CENTER))
             else:
                  action_area.controls.append(ft.Text("لم يتم تسجيل أي أصوات أو لا يوجد فائز واضح.", size=18, text_align=ft.TextAlign.CENTER))
             
@@ -362,7 +362,7 @@ def min_fina_online_logic(page: ft.Page, go_home_fn, send_action_fn, room_code: 
         ft.Divider(), status_text, ft.Divider(),
         question_display_area, 
         ft.Row([
-            ft.Container(content=player_list_display, padding=10, border=ft.border.all(1, ft.colors.OUTLINE), border_radius=5, width=250, margin=ft.margin.only(right=10)),
+            ft.Container(content=player_list_display, padding=10, border=ft.border.all(1, "outline"), border_radius=5, width=250, margin=ft.margin.only(right=10)),
             ft.VerticalDivider(),
             ft.Container(content=action_area, padding=10, expand=True, alignment=ft.alignment.top_center)
         ], vertical_alignment=ft.CrossAxisAlignment.START, expand=True),

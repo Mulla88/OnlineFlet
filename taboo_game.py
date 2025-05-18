@@ -231,7 +231,7 @@ def taboo_offline_logic(page: ft.Page, go_home_fn):
             words = summary_data.get("words", [])
             
             summary_controls_content = [ 
-                ft.Text(f"⏰ انتهى الوقت! فريق: {team_name}", size=22, weight="bold", color=ft.colors.PRIMARY),
+                ft.Text(f"⏰ انتهى الوقت! فريق: {team_name}", size=22, weight="bold", color="primary"),
                 ft.Text("🔤 الكلمات التي ظهرت:", size=20)
             ]
             if not words:
@@ -419,7 +419,7 @@ def taboo_online_logic(page: ft.Page, go_home_fn, send_action_fn, room_code: str
             if not word_list_controls: word_list_controls.append(ft.Text("لم يتم لعب أي كلمات في هذا الدور.", italic=True))
 
             action_area_online.controls.extend([
-                ft.Text(f"⏰ ملخص دور فريق: {summary_team} (الجولة {summary_round_num})", size=22, weight="bold", color=ft.colors.PRIMARY),
+                ft.Text(f"⏰ ملخص دور فريق: {summary_team} (الجولة {summary_round_num})", size=22, weight="bold", color="primary"),
                 ft.Text("🔤 الكلمات:", size=20)] + word_list_controls)
             
             if is_host: 
@@ -467,7 +467,7 @@ def taboo_online_logic(page: ft.Page, go_home_fn, send_action_fn, room_code: str
         word_card_display_online, 
         ft.Row([
             ft.Container(content=ft.Column([player_list_display_online, ft.Divider(), team_score_display_online]), 
-                         padding=10, border=ft.border.all(1, ft.colors.OUTLINE), border_radius=5, width=280, margin=ft.margin.only(right=10)),
+                         padding=10, border=ft.border.all(1, "outline"), border_radius=5, width=280, margin=ft.margin.only(right=10)),
             ft.VerticalDivider(),
             ft.Container(content=action_area_online, padding=10, expand=True, alignment=ft.alignment.top_center)
         ], vertical_alignment=ft.CrossAxisAlignment.START, expand=True),
