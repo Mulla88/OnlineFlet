@@ -412,10 +412,10 @@ def bara_alsalfa_online_logic(page: ft.Page, go_home_fn, send_action_fn, room_co
                 start_game_button_lobby.disabled = not can_start_game
 
                 if not gs.get("selected_category"):
-                    action_area.controls.append(ft.Text("(اختر قائمة أولاً لتفعيل زر بدء اللعبة)", size=12, color=ft.colors.ON_SURFACE_VARIANT, text_align=ft.TextAlign.CENTER))
+                    action_area.controls.append(ft.Text("(اختر قائمة أولاً لتفعيل زر بدء اللعبة)", size=12, color="onSurfaceVariant", text_align=ft.TextAlign.CENTER))
                 elif len(players_in_room) < gs.get("min_players_for_game", 3):
                     remaining_to_join = gs.get("min_players_for_game", 3) - len(players_in_room)
-                    action_area.controls.append(ft.Text(f" (تحتاج {remaining_to_join} لاعبين إضافيين لبدء اللعبة)", size=12, color=ft.colors.ON_SURFACE_VARIANT, text_align=ft.TextAlign.CENTER))
+                    action_area.controls.append(ft.Text(f" (تحتاج {remaining_to_join} لاعبين إضافيين لبدء اللعبة)", size=12, color="onSurfaceVariant", text_align=ft.TextAlign.CENTER))
                 else: 
                      action_area.controls.append(ft.Text("(جاهز لبدء اللعبة!)", size=12, color=ft.colors.GREEN_ACCENT_700, text_align=ft.TextAlign.CENTER))
             
@@ -642,7 +642,7 @@ def bara_alsalfa_online_logic(page: ft.Page, go_home_fn, send_action_fn, room_co
             [
                 ft.Container(
                     content=player_list_display, 
-                    padding=10, border=ft.border.all(1, ft.colors.OUTLINE), border_radius=5,
+                    padding=10, border=ft.border.all(1, "outline"), border_radius=5,
                     width=250, margin=ft.margin.only(right=10), alignment=ft.alignment.top_left,
                 ),
                 ft.VerticalDivider(width=10),
