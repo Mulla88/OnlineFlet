@@ -41,9 +41,9 @@ def bara_alsalfa_offline_logic(page: ft.Page, go_home_fn):
             offline_content_area.controls.extend([
                 ft.Text("عدد اللاعبين:", size=18),
                 ft.Row([
-                    ft.IconButton(ft.icons.REMOVE, on_click=lambda e: change_num_players_offline(-1)),
+                    ft.IconButton(ft.Icons.REMOVE, on_click=lambda e: change_num_players_offline(-1)),
                     ft.Text(str(s["num_players"]), size=24),
-                    ft.IconButton(ft.icons.ADD, on_click=lambda e: change_num_players_offline(1)),
+                    ft.IconButton(ft.Icons.ADD, on_click=lambda e: change_num_players_offline(1)),
                 ], alignment=ft.MainAxisAlignment.CENTER),
                 ft.ElevatedButton("التالي", on_click=lambda e: set_offline_page("input_names"), width=200, height=50),
                 ft.ElevatedButton("🏠 العودة للقائمة الرئيسية", on_click=go_home_fn, width=200, height=50)
@@ -633,7 +633,7 @@ def bara_alsalfa_online_logic(page: ft.Page, go_home_fn, send_action_fn, room_co
         status_text.value = "خطأ في الاتصال بالغرفة. قد تحتاج للعودة والمحاولة مجدداً."
 
     online_container.controls.extend([
-        ft.Row([page_title, ft.IconButton(ft.icons.HOME, tooltip="العودة للرئيسية", on_click=go_home_fn)], alignment=ft.MainAxisAlignment.SPACE_BETWEEN),
+        ft.Row([page_title, ft.IconButton(ft.Icons.HOME, tooltip="العودة للرئيسية", on_click=go_home_fn)], alignment=ft.MainAxisAlignment.SPACE_BETWEEN),
         ft.Divider(),
         status_text,
         ft.Divider(),
