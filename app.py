@@ -453,20 +453,32 @@ def main(page: ft.Page):
          )
 
 
+# app.py
+
     def route_change(e: ft.RouteChangeEvent):
-        print(f"--- ROUTE CHANGE START --- Target Route: {e.route}, Current page.views: {[v.route for v in page.views if v] if page.views else 'EMPTY'}")
-        
-        # Preserve the current views to inspect them before clearing
-        # current_view_stack_before_clear = [v.route for v in page.views if v]
+        target_route = e.route
+        current_top_view_route = page.views[-1].route if page.views else None
+
+        print(f"--- ROUTE CHANGE START --- Target Route: {target_route}, Current Top View: {current_top_view_route}, page.views count: {len(page.views)}")
+
+        # If the new route is the same as the current top view's route,
+        # and the view stack isn't being completely rebuilt (e.g. from a page.go("/") from go_home),
+        # then it might be a redundant call.
+        # This check helps prevent loops if view_pop -> page.go -> route_change -> view_pop happens with same routes.
+        if current_top_view_route == target_route and len(page.views) == 1 and page.views[0].route == target_route:
+            print(f"Route change to {target_route} considered redundant as it's already the single top view. Forcing update.")
+            if page.client_storage: page.update() # Force update the current view if anything changed in its controls
+            return
 
         page.views.clear()
         print(f"page.views cleared. Now empty.")
         
-        route_parts = e.route.strip("/").split("/")
+        route_parts = target_route.strip("/").split("/")
         current_route_base = route_parts[0] if route_parts and route_parts[0] else ""
         print(f"Parsed Route base: '{current_route_base}', Parts: {route_parts}")
 
-        new_view_to_append = None
+        new_view_to_append = None # Initialize here
+
         if current_route_base == "":
             print("Action: Routing to Home Page")
             new_view_to_append = view_home_page()
@@ -494,59 +506,73 @@ def main(page: ft.Page):
             p_name_from_route = route_parts[4] if mode == "online" and len(route_parts) > 4 else None
             print(f"Action: Routing to Game Launcher for {game_type}, Mode: {mode}")
             if mode == "online" and game_type in ["heads_up", "mafia"]:
-                print(f"Redirect: Online game not for offline-only game {game_type}. Redirecting to offline mode.")
+                print(f"Redirect: Online game not for offline-only game {game_type}. Redirecting to offline.")
                 page.go(f"/game/{game_type}/offline")
                 return 
             new_view_to_append = view_game_launcher(game_type, mode, room_code_from_route, p_name_from_route)
         else:
-            print(f"Action: Routing to Home Page (Fallback for unknown route: {e.route})")
+            print(f"Action: Routing to Home Page (Fallback for unknown route: {target_route})")
             new_view_to_append = view_home_page()
 
         if new_view_to_append:
             page.views.append(new_view_to_append)
             print(f"View appended: {new_view_to_append.route}. page.views count after append: {len(page.views)}")
         else:
-            print(f"Error: No view was created for route {e.route}. Appending home page as fallback.")
+            # This should ideally not be hit if all routes are covered or have a fallback
+            print(f"CRITICAL Error: No view was created for route {target_route}. Appending home page as fallback.")
             page.views.append(view_home_page())
 
 
         if page.client_storage:
-            print("Calling page.update() to render new view.")
+            print("Calling page.update()")
             page.update()
             print("page.update() finished.")
         else:
             print("page.client_storage is None, skipping page.update().")
-        print(f"--- ROUTE CHANGE END --- New top view: {page.views[-1].route if page.views else 'EMPTY'}")
+        # It's important that page.route reflects the new top view AFTER page.update()
+        # Flet usually handles setting page.route when page.go() is called or when views are manipulated
+        # and then page.update() is called.
+        print(f"--- ROUTE CHANGE END --- New top view: {page.views[-1].route if page.views else 'EMPTY'}, page.route is now: {page.route}")
 
 
     def view_pop(e: ft.ViewPopEvent):
-        current_view_route_being_popped = e.view.route if e.view else "N/A"
-        print(f"--- VIEW POP START --- Popping: '{current_view_route_being_popped}'. page.views count BEFORE Flet's internal pop: {len(page.views)}")
+        current_view_route_being_popped = e.view.route if e.view else "N/A" # e.view can be None
+        current_page_views_count = len(page.views)
+        print(f"--- VIEW POP START --- Popping: '{current_view_route_being_popped}'. page.views count BEFORE Flet's internal pop: {current_page_views_count}")
 
-        if e.view and e.view.route and e.view.route.startswith("/game/") and "/online/" in e.view.route:
+        # If e.view is None, it's a problematic pop event. Safest to go home.
+        if not e.view or not e.view.route: # More robust check
+            print("ViewPopEvent: e.view or e.view.route is None. Navigating to home ('/').")
+            page.go("/")
+            print(f"--- VIEW POP END (e.view was None or no route) ---")
+            return
+
+        # Handle special case: Leaving an online game view
+        if e.view.route.startswith("/game/") and "/online/" in e.view.route:
             print(f"Online game view pop detected for route: {e.view.route}. Triggering go_home.")
             go_home() 
             print(f"--- VIEW POP END (after go_home for online game) ---")
             return 
 
-        # Flet will pop e.view from page.views after this handler if we don't page.go()
-        # We want to determine the correct "back" destination.
-        
-        # If page.views has 0 or 1 items, Flet's pop will lead to an empty stack,
-        # or the browser might go "back" beyond our app.
-        # So, if we are at the root view (or an error state resulted in a very short stack),
-        # a "pop" should ideally do nothing or ensure we are at the home page.
-        
-        if len(page.views) <= 1 :
-             print(f"View pop on root view or shallow stack (count: {len(page.views)}). Explicitly navigating to home ('/').")
-             page.go("/")
-        else:
-            # There are at least two views. Flet will pop the top one (e.view).
-            # The new top view will be page.views[-2] (relative to the stack *before* Flet pops).
-            # We explicitly navigate there to ensure our route_change logic takes over.
+        # For all other views (non-online game views)
+        # Flet is about to pop e.view. page.views still contains it.
+        if current_page_views_count > 1:
+            # The view to navigate back to is the one before e.view in the current stack
             destination_route = page.views[-2].route 
             print(f"Standard pop. Navigating to previous view: {destination_route}")
             page.go(destination_route)
+        else:
+            # Only one view was on the stack (e.g., the home page), or stack was empty.
+            # A "pop" from the very first view should logically lead back to the home page (or do nothing if already home).
+            print(f"View pop on root view or shallow stack (count: {current_page_views_count}). Navigating to home ('/').")
+            if page.route != "/": # Avoid redundant page.go("/") if already there
+                 page.go("/")
+            else: # Already on home, browser back might go out of app. Flet might just stay.
+                 print("Already on home page, pop event likely from browser trying to go further back.")
+                 # No page.go() here, let browser handle it or Flet keep state.
+                 # However, if this still causes issues, force page.go("/")
+                 # page.go("/") # Uncomment if simply passing causes issues
+                 pass
         
         print(f"--- VIEW POP END ---")
 
