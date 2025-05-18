@@ -39,8 +39,21 @@ def process_game_action(page_ref: ft.Page, room_code: str, player_name: str, gam
     
     if room_code not in GAME_ROOMS:
         print(f"Error: Room {room_code} does not exist for action {action_type} by {player_name}.")
+        # Consider sending an error message back to the client if possible, e.g., via a snackbar if the page object is still valid
+        # For now, just log and return
+        if page_ref.client_storage: # Check if client is still connected
+            page_ref.snack_bar = ft.SnackBar(ft.Text(f"خطأ: الغرفة {room_code} غير موجودة."), open=True)
+            page_ref.update()
         return
 
+    # Ensure game_state exists
+    if "game_state" not in GAME_ROOMS[room_code]:
+        print(f"Error: game_state missing for room {room_code}. Action {action_type} by {player_name} cannot be processed.")
+        if page_ref.client_storage:
+            page_ref.snack_bar = ft.SnackBar(ft.Text(f"خطأ داخلي في الغرفة {room_code}."), open=True)
+            page_ref.update()
+        return
+        
     if game_type == "bara_alsalfa":
         process_bara_alsalfa_action(page_ref, room_code, player_name, action_type, payload, GAME_ROOMS)
     elif game_type == "bedoon_kalam":
@@ -88,15 +101,16 @@ def main(page: ft.Page):
                             new_host_name = list(room_data["players"].keys())[0]
                             room_data["players"][new_host_name]["is_host"] = True
                             room_data["host_id"] = new_host_name
-                            gs["status_message"] = f"الهوست ({pn}) غادر. الهوست الجديد هو {new_host_name}."
+                            if gs: gs["status_message"] = f"الهوست ({pn}) غادر. الهوست الجديد هو {new_host_name}."
                             print(f"Host {pn} left room {rc}. New host is {new_host_name}.")
                         else:
-                            gs["status_message"] = f"اللاعب {pn} غادر الغرفة."
+                            if gs: gs["status_message"] = f"اللاعب {pn} غادر الغرفة."
                         
-                        page.pubsub.send_all_on_topic(
-                            f"room_{rc}",
-                            {"type": "PLAYER_LEFT", "player_name": pn, "room_state": room_data}
-                        )
+                        if page.client_storage: # Ensure client is still connected before pubsub
+                             page.pubsub.send_all_on_topic(
+                                 f"room_{rc}",
+                                 {"type": "PLAYER_LEFT", "player_name": pn, "room_state": room_data}
+                             )
             else:
                 print(f"Player {pn} was in session for room {rc}, but room no longer exists.")
         
@@ -114,13 +128,14 @@ def main(page: ft.Page):
     ]
 
     def view_home_page():
+         print("--- Building Home Page View ---")
          return ft.View(
              "/",
              [
                  ft.Text("🎮 أهلاً بك في ألعابنا!", size=32, weight="bold", text_align="center"),
                  ft.Text("اختر اللعبة:", size=20, text_align="center"),
                  ft.Column(
-                     [ft.ElevatedButton(text, on_click=lambda _, gt=game_type_val: page.go(f"/rules/{gt}"), width=250, height=50) 
+                     [ft.ElevatedButton(text, on_click=lambda e, gt=game_type_val: page.go(f"/rules/{gt}"), width=250, height=50) 
                       for text, game_type_val in available_games],
                      alignment=ft.MainAxisAlignment.CENTER,
                      horizontal_alignment=ft.CrossAxisAlignment.CENTER,
@@ -134,6 +149,7 @@ def main(page: ft.Page):
          )
 
     def view_rules_page(game_type: str):
+         print(f"--- Building Rules Page View for {game_type} ---")
          rules_content = []
          game_display_name = "لعبة" 
          
@@ -196,16 +212,16 @@ def main(page: ft.Page):
              game_display_name = "تريفيا باتل"
              rules_content.extend([
                 ft.Text("📜 قوانين تريفيا باتل", size=28, weight="bold"),
-                ft.Text("👥 عدد اللاعبين: 2-6 لاعبين.", size=18), # CHANGED
-                ft.Text("🎯 فكرة اللعبة: مسابقة معلومات فردية بين اللاعبين.", size=16, text_align=ft.TextAlign.CENTER), # CHANGED
-                ft.Text("🕹️ كيفية اللعب: الهوست يختار فئة الأسئلة. كل لاعب يتناوب للإجابة على 10 أسئلة. نقطة لكل إجابة صحيحة.", size=16, text_align=ft.TextAlign.CENTER), # CHANGED
-                ft.Text("🏁 النتيجة: اللاعب صاحب أعلى مجموع نقاط يفوز بعد انتهاء جميع الأسئلة.", size=16, text_align=ft.TextAlign.CENTER), # CHANGED
+                ft.Text("👥 عدد اللاعبين: 2-6 لاعبين.", size=18), 
+                ft.Text("🎯 فكرة اللعبة: مسابقة معلومات فردية بين اللاعبين.", size=16, text_align=ft.TextAlign.CENTER), 
+                ft.Text("🕹️ كيفية اللعب: الهوست يختار فئة الأسئلة. كل لاعب يتناوب للإجابة على 10 أسئلة. نقطة لكل إجابة صحيحة.", size=16, text_align=ft.TextAlign.CENTER), 
+                ft.Text("🏁 النتيجة: اللاعب صاحب أعلى مجموع نقاط يفوز بعد انتهاء جميع الأسئلة.", size=16, text_align=ft.TextAlign.CENTER), 
             ])
          else:
              rules_content.append(ft.Text(f"قوانين لعبة {game_type} غير محددة بعد."))
 
          rules_content.append(ft.ElevatedButton(f"▶ المتابعة إلى اختيار وضع اللعب لـ {game_display_name}", 
-                                                 on_click=lambda _, gt=game_type: page.go(f"/select_mode/{gt}"), 
+                                                 on_click=lambda e, gt=game_type: page.go(f"/select_mode/{gt}"), 
                                                  width=350, height=50))
          
          rules_content.append(ft.ElevatedButton("🏠 العودة للقائمة الرئيسية", on_click=go_home, width=200, height=40))
@@ -221,6 +237,7 @@ def main(page: ft.Page):
          )
 
     def view_select_mode_page(game_type: str):
+         print(f"--- Building Select Mode Page View for {game_type} ---")
          game_display_name = next((text for text, val in available_games if val == game_type), game_type.replace("_", " ").title())
          is_online_capable = not (game_type in ["heads_up", "mafia"])
          local_player_name_input = ft.TextField(label="اسمك (للعب أونلاين)", width=300, text_align=ft.TextAlign.CENTER, visible=is_online_capable)
@@ -240,18 +257,19 @@ def main(page: ft.Page):
              f"/select_mode/{game_type}",
              [
                  ft.Text(f"اختر وضع اللعب لـ: {game_display_name}", size=24, weight="bold"),
-                 ft.ElevatedButton("📱 لعب أوفلاين (جهاز واحد)", on_click=lambda _: page.go(f"/game/{game_type}/offline"), width=300, height=60),
+                 ft.ElevatedButton("📱 لعب أوفلاين (جهاز واحد)", on_click=lambda e: page.go(f"/game/{game_type}/offline"), width=300, height=60),
                  ft.Divider(height=10, visible=is_online_capable),
                  ft.Text("للعب أونلاين، أدخل اسمك:", size=16, visible=is_online_capable),
                  local_player_name_input, 
                  ft.ElevatedButton(online_button_text, on_click=attempt_go_to_online_options if is_online_capable else None, width=300, height=60, disabled=not is_online_capable),
-                 ft.ElevatedButton("🔙 رجوع للقوانين", on_click=lambda _, gt=game_type: page.go(f"/rules/{gt}"), width=200),
+                 ft.ElevatedButton("🔙 رجوع للقوانين", on_click=lambda e, gt=game_type: page.go(f"/rules/{gt}"), width=200),
                  ft.ElevatedButton("🏠 العودة للقائمة الرئيسية", on_click=go_home, width=200)
              ],
              vertical_alignment=ft.MainAxisAlignment.CENTER, horizontal_alignment=ft.CrossAxisAlignment.CENTER, spacing=15
          )
 
     def view_online_options_page(game_type: str, current_player_name_from_route: str):
+         print(f"--- Building Online Options Page View for {game_type} ---")
          game_display_name = next((text for text, val in available_games if val == game_type), game_type.replace("_", " ").title())
          room_code_input = ft.TextField(label="أدخل كود الغرفة", width=250, text_align=ft.TextAlign.CENTER, capitalization=ft.TextCapitalization.CHARACTERS)
          p_name_for_session = current_player_name_from_route 
@@ -288,11 +306,11 @@ def main(page: ft.Page):
                 initial_gs["round_duration"] = 60 
                 initial_gs["min_players_for_game"] = 2 
             elif game_type == "trivia_battle": 
-                initial_gs["status_message"] = "في انتظار اللاعبين... الهوست يختار الفئة عند اكتمال العدد." # CHANGED
-                initial_gs["players_scores_online"] = {} # CHANGED from teams_online
-                initial_gs["questions_per_player"] = 10 # NEW
-                initial_gs["min_players_for_game"] = 2  # Keep
-                initial_gs["max_players_for_game"] = 6  # NEW - good for UI display
+                initial_gs["status_message"] = "في انتظار اللاعبين... الهوست يختار الفئة عند اكتمال العدد." 
+                initial_gs["players_scores_online"] = {} 
+                initial_gs["questions_per_player"] = 10 
+                initial_gs["min_players_for_game"] = 2  
+                initial_gs["max_players_for_game"] = 6  
                 initial_gs["question_pool_online"] = []
 
             GAME_ROOMS[new_code] = {
@@ -326,7 +344,6 @@ def main(page: ft.Page):
                      if page.client_storage: page.update()
                      return
 
-                 # --- Prevent joining mid-game ---
                  game_in_progress = False
                  game_specific_message = f"عذراً، لعبة {game_display_name} قد بدأت بالفعل!"
 
@@ -336,24 +353,20 @@ def main(page: ft.Page):
                      game_in_progress = True
                  elif game_type == "min_fina" and room_gs.get("phase") not in ["LOBBY", "QUESTION_DISPLAY"]:
                     game_in_progress = True
-                    page.snack_bar = ft.SnackBar(ft.Text(game_specific_message), open=True) # Add snackbar here too
                  elif game_type == "taboo" and room_gs.get("phase") not in ["LOBBY", "TEAMS_SET_TABOO"]:
                      game_in_progress = True
-                 elif game_type == "trivia_battle" and room_gs.get("phase") not in ["LOBBY"]: 
-                     # For Trivia, LOBBY is the only pre-game phase. Once teams/category set, it might move to QUESTION_DISPLAY_ONLINE
-                     if room_gs.get("phase") != "LOBBY": # A bit more direct
-                         game_in_progress = True
+                 elif game_type == "trivia_battle" and room_gs.get("phase") != "LOBBY":
+                     game_in_progress = True
                  
                  if game_in_progress:
                      page.snack_bar = ft.SnackBar(ft.Text(game_specific_message), open=True)
                      if page.client_storage: page.update()
                      return
-                 # --- End prevent joining mid-game ---
                  
                  absolute_max_players = 15 
                  if game_type == "min_fina": absolute_max_players = 12
                  elif game_type == "taboo": absolute_max_players = 10 
-                 elif game_type == "trivia_battle": absolute_max_players = 12 
+                 elif game_type == "trivia_battle": absolute_max_players = 6 # Max for trivia
                  
                  if len(room["players"]) >= absolute_max_players:
                      page.snack_bar = ft.SnackBar(ft.Text("عذراً، الغرفة ممتلئة بالحد الأقصى للعبة!"), open=True)
@@ -363,14 +376,13 @@ def main(page: ft.Page):
                  room["players"][p_name_for_session] = {"name": p_name_for_session, "page_id": page.session_id, "is_host": False}
                  if game_type == "bara_alsalfa" and "global_scores" in room_gs: 
                      room_gs["global_scores"][p_name_for_session] = 0.0
-
-                 elif game_type == "trivia_battle": # ADDED THIS
+                 elif game_type == "trivia_battle": 
                     if "players_scores_online" in room_gs:
                         room_gs["players_scores_online"][p_name_for_session] = 0
                  
                  ONLINE_PLAYER_SESSIONS[page.session_id] = {"room_code": code_to_join, "player_name": p_name_for_session}
                  
-                 room_gs["status_message"] = f"اللاعب {p_name_for_session} انضم إلى الغرفة!"
+                 if room_gs: room_gs["status_message"] = f"اللاعب {p_name_for_session} انضم إلى الغرفة!"
                  page.pubsub.send_all_on_topic(
                      f"room_{code_to_join}",
                      {"type": "PLAYER_JOINED", "player_name": p_name_for_session, "room_state": room}
@@ -389,12 +401,13 @@ def main(page: ft.Page):
                  ft.Divider(),
                  room_code_input,
                  ft.ElevatedButton("🔗 الانضمام لغرفة", on_click=join_room_click, width=250, height=50),
-                 ft.ElevatedButton("🔙 رجوع لاختيار الوضع", on_click=lambda _, gt=game_type: page.go(f"/select_mode/{gt}"), width=200)
+                 ft.ElevatedButton("🔙 رجوع لاختيار الوضع", on_click=lambda e, gt=game_type: page.go(f"/select_mode/{gt}"), width=200)
              ],
              vertical_alignment=ft.MainAxisAlignment.CENTER, horizontal_alignment=ft.CrossAxisAlignment.CENTER, spacing=15
          )
 
     def view_game_launcher(game_type: str, mode: str, room_code: str = None, p_name: str = None):
+         print(f"--- Building Game Launcher View for {game_type}, Mode: {mode} ---")
          game_controls = []
          is_online = (mode == "online")
 
@@ -405,12 +418,12 @@ def main(page: ft.Page):
                  return ft.View(page.route, [ft.Text("خطأ في بيانات الغرفة أو اللاعب.")]) 
 
              if page.session_id not in ONLINE_PLAYER_SESSIONS:
-                 if room_code in GAME_ROOMS and p_name in GAME_ROOMS[room_code]["players"]:
+                 if room_code in GAME_ROOMS and GAME_ROOMS[room_code]["players"].get(p_name): # Check if player still in room
                      ONLINE_PLAYER_SESSIONS[page.session_id] = {"room_code": room_code, "player_name": p_name}
                      GAME_ROOMS[room_code]["players"][p_name]["page_id"] = page.session_id 
                      print(f"Re-established session for {p_name} in room {room_code} on page load.")
                  else:
-                     print(f"Session {page.session_id} for {p_name} in {room_code} is invalid (room/player missing in GAME_ROOMS). Redirecting home.")
+                     print(f"Session {page.session_id} for {p_name} in {room_code} is invalid. Room/player missing or player was removed. Redirecting home.")
                      go_home()
                      return ft.View(page.route, [ft.Text("انتهت الغرفة أو الجلسة غير صالحة.")])
 
@@ -439,93 +452,107 @@ def main(page: ft.Page):
              padding=10 
          )
 
+
     def route_change(e: ft.RouteChangeEvent):
-         print(f"Route change to: {e.route}, session ID: {page.session_id}")
-         page.views.clear()
-         
-         route_parts = e.route.strip("/").split("/")
-         current_route_base = route_parts[0] if route_parts and route_parts[0] else ""
+        print(f"--- ROUTE CHANGE START --- Target Route: {e.route}, Current page.views: {[v.route for v in page.views if v] if page.views else 'EMPTY'}")
+        
+        # Preserve the current views to inspect them before clearing
+        # current_view_stack_before_clear = [v.route for v in page.views if v]
 
-         if current_route_base == "":
-             page.views.append(view_home_page())
-         elif current_route_base == "rules" and len(route_parts) == 2: 
-             page.views.append(view_rules_page(route_parts[1]))
-         elif current_route_base == "select_mode" and len(route_parts) == 2:
-             page.views.append(view_select_mode_page(route_parts[1]))
-         elif current_route_base == "online_options" and len(route_parts) == 3: 
-             game_type_for_online_opt = route_parts[1]
-             player_name_for_online_opt = route_parts[2]
-             if game_type_for_online_opt in ["heads_up", "mafia"]:
-                 print(f"Attempt to access online_options for offline-only game: {game_type_for_online_opt}. Redirecting.")
-                 page.go(f"/select_mode/{game_type_for_online_opt}") 
-                 return 
-             page.views.append(view_online_options_page(game_type_for_online_opt, player_name_for_online_opt))
+        page.views.clear()
+        print(f"page.views cleared. Now empty.")
+        
+        route_parts = e.route.strip("/").split("/")
+        current_route_base = route_parts[0] if route_parts and route_parts[0] else ""
+        print(f"Parsed Route base: '{current_route_base}', Parts: {route_parts}")
 
-         elif current_route_base == "game" and len(route_parts) >= 3:
-             game_type = route_parts[1]
-             mode = route_parts[2] 
-             
-             room_code_from_route = None
-             p_name_from_route = None
+        new_view_to_append = None
+        if current_route_base == "":
+            print("Action: Routing to Home Page")
+            new_view_to_append = view_home_page()
+        elif current_route_base == "rules" and len(route_parts) == 2: 
+            game_type_for_rules = route_parts[1]
+            print(f"Action: Routing to Rules Page for {game_type_for_rules}")
+            new_view_to_append = view_rules_page(game_type_for_rules)
+        elif current_route_base == "select_mode" and len(route_parts) == 2:
+            game_type_for_select_mode = route_parts[1]
+            print(f"Action: Routing to Select Mode Page for {game_type_for_select_mode}")
+            new_view_to_append = view_select_mode_page(game_type_for_select_mode)
+        elif current_route_base == "online_options" and len(route_parts) == 3: 
+            game_type_for_online_opt = route_parts[1]
+            player_name_for_online_opt = route_parts[2]
+            print(f"Action: Routing to Online Options for {game_type_for_online_opt}, Player: {player_name_for_online_opt}")
+            if game_type_for_online_opt in ["heads_up", "mafia"]:
+                print(f"Redirect: Online options not for offline-only game {game_type_for_online_opt}. Redirecting to select_mode.")
+                page.go(f"/select_mode/{game_type_for_online_opt}") 
+                return 
+            new_view_to_append = view_online_options_page(game_type_for_online_opt, player_name_for_online_opt)
+        elif current_route_base == "game" and len(route_parts) >= 3:
+            game_type = route_parts[1]
+            mode = route_parts[2]
+            room_code_from_route = route_parts[3] if mode == "online" and len(route_parts) > 3 else None
+            p_name_from_route = route_parts[4] if mode == "online" and len(route_parts) > 4 else None
+            print(f"Action: Routing to Game Launcher for {game_type}, Mode: {mode}")
+            if mode == "online" and game_type in ["heads_up", "mafia"]:
+                print(f"Redirect: Online game not for offline-only game {game_type}. Redirecting to offline mode.")
+                page.go(f"/game/{game_type}/offline")
+                return 
+            new_view_to_append = view_game_launcher(game_type, mode, room_code_from_route, p_name_from_route)
+        else:
+            print(f"Action: Routing to Home Page (Fallback for unknown route: {e.route})")
+            new_view_to_append = view_home_page()
 
-             if mode == "online":
-                 if len(route_parts) > 3: room_code_from_route = route_parts[3]
-                 if len(route_parts) > 4: p_name_from_route = route_parts[4]
-                 
-                 if game_type in ["heads_up", "mafia"]:
-                     print(f"Attempt to access online game for offline-only game: {game_type}. Redirecting to offline.")
-                     page.go(f"/game/{game_type}/offline")
-                     return 
-             
-             page.views.append(view_game_launcher(game_type, mode, room_code_from_route, p_name_from_route))
-         else:
-             page.views.append(view_home_page())
+        if new_view_to_append:
+            page.views.append(new_view_to_append)
+            print(f"View appended: {new_view_to_append.route}. page.views count after append: {len(page.views)}")
+        else:
+            print(f"Error: No view was created for route {e.route}. Appending home page as fallback.")
+            page.views.append(view_home_page())
 
-         if page.client_storage: page.update()
 
-# app.py
+        if page.client_storage:
+            print("Calling page.update() to render new view.")
+            page.update()
+            print("page.update() finished.")
+        else:
+            print("page.client_storage is None, skipping page.update().")
+        print(f"--- ROUTE CHANGE END --- New top view: {page.views[-1].route if page.views else 'EMPTY'}")
 
-# app.py
 
     def view_pop(e: ft.ViewPopEvent):
-        # e.view is the Flet View object that is about to be popped.
-        # page.views still includes e.view as its top element at this point.
-        
         current_view_route_being_popped = e.view.route if e.view else "N/A"
-        print(f"--- VIEW POP START --- Popping: '{current_view_route_being_popped}'. page.views count: {len(page.views)}")
+        print(f"--- VIEW POP START --- Popping: '{current_view_route_being_popped}'. page.views count BEFORE Flet's internal pop: {len(page.views)}")
 
-        # 1. Handle special case: Leaving an online game view
         if e.view and e.view.route and e.view.route.startswith("/game/") and "/online/" in e.view.route:
             print(f"Online game view pop detected for route: {e.view.route}. Triggering go_home.")
             go_home() 
-            # go_home() calls page.go("/"), which handles view stack reset via route_change.
-            # We must return here to prevent any further logic in this view_pop handler.
             print(f"--- VIEW POP END (after go_home for online game) ---")
             return 
 
-        # 2. For all other views, determine the actual "previous" view to navigate to.
-        # We will manually remove the current top view (e.view) from our conceptual stack
-        # and then navigate to what's now at the top of that modified stack.
-
-        if len(page.views) > 1:
-            # There is at least one view "under" the current view (e.view).
-            # We want to go to the view that is at index -2 from the current page.views.
-            # (i.e., page.views[-1] is e.view, page.views[-2] is the one before it).
+        # Flet will pop e.view from page.views after this handler if we don't page.go()
+        # We want to determine the correct "back" destination.
+        
+        # If page.views has 0 or 1 items, Flet's pop will lead to an empty stack,
+        # or the browser might go "back" beyond our app.
+        # So, if we are at the root view (or an error state resulted in a very short stack),
+        # a "pop" should ideally do nothing or ensure we are at the home page.
+        
+        if len(page.views) <= 1 :
+             print(f"View pop on root view or shallow stack (count: {len(page.views)}). Explicitly navigating to home ('/').")
+             page.go("/")
+        else:
+            # There are at least two views. Flet will pop the top one (e.view).
+            # The new top view will be page.views[-2] (relative to the stack *before* Flet pops).
+            # We explicitly navigate there to ensure our route_change logic takes over.
             destination_route = page.views[-2].route 
             print(f"Standard pop. Navigating to previous view: {destination_route}")
             page.go(destination_route)
-        else:
-            # This means e.view was the only view in page.views (e.g., the home page).
-            # Or page.views was somehow empty (shouldn't happen if route_change is correct).
-            # In this case, "back" should effectively mean "go to home" or "stay on home".
-            print(f"View pop on root view or shallow stack (count: {len(page.views)}). Navigating to home ('/').")
-            page.go("/")
         
         print(f"--- VIEW POP END ---")
 
     page.on_route_change = route_change
     page.on_view_pop = view_pop
-    page.go(page.route)
+    page.go(page.route) # Initial route loading
 
 ft.app(
     target=main, 
