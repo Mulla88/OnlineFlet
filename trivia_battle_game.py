@@ -88,8 +88,8 @@ def trivia_battle_offline_logic(page: ft.Page, go_home_fn):
             offline_main_column.controls.extend([
                 player_count_display,
                 ft.Row([
-                    ft.IconButton(icon=ft.icons.REMOVE, on_click=lambda e: change_player_count_offline(-1)),
-                    ft.IconButton(icon=ft.icons.ADD, on_click=lambda e: change_player_count_offline(1)),
+                    ft.IconButton(icon=ft.Icons.REMOVE, on_click=lambda e: change_player_count_offline(-1)),
+                    ft.IconButton(icon=ft.Icons.ADD, on_click=lambda e: change_player_count_offline(1)),
                 ], alignment="center"),
                 ft.ElevatedButton("التالي: أسماء اللاعبين", on_click=lambda e: prepare_player_name_inputs_offline(), width=200), # CHANGED
                 ft.ElevatedButton("🏠 العودة للقائمة", on_click=lambda e: safe_go_home_offline_trivia(), width=200)
@@ -111,7 +111,7 @@ def trivia_battle_offline_logic(page: ft.Page, go_home_fn):
             q_data = s.get("current_question_data")
             if not q_data:
                 # ... (error handling same)
-                offline_main_column.controls.append(ft.Text("خطأ: لا يوجد سؤال حالي أو انتهت الأسئلة.", color=ft.colors.RED))
+                offline_main_column.controls.append(ft.Text("خطأ: لا يوجد سؤال حالي أو انتهت الأسئلة.", color=ft.Colors.RED))
                 offline_main_column.controls.append(ft.ElevatedButton("النتائج النهائية", on_click=lambda e: set_offline_trivia_step("results")))
                 if page.client_storage: page.update(); return
 
@@ -121,7 +121,7 @@ def trivia_battle_offline_logic(page: ft.Page, go_home_fn):
             player_q_count = s["player_question_counts"].get(current_player_name, 0)
             total_qs_for_player = s["questions_per_player"]
 
-            offline_main_column.controls.append(ft.Text(f"❓ سؤال للاعب: {current_player_name} (سؤاله رقم {player_q_count + 1}/{total_qs_for_player})", size=20, weight="bold", color=ft.colors.BLUE_700)) # CHANGED
+            offline_main_column.controls.append(ft.Text(f"❓ سؤال للاعب: {current_player_name} (سؤاله رقم {player_q_count + 1}/{total_qs_for_player})", size=20, weight="bold", color=ft.Colors.BLUE_700)) # CHANGED
             offline_main_column.controls.append(ft.Text(q_data.get("question",""), size=22, text_align=ft.TextAlign.CENTER, weight="bold", selectable=True))
             
             options_column = ft.Column(spacing=10, horizontal_alignment=ft.CrossAxisAlignment.CENTER, width=350) 
@@ -140,9 +140,9 @@ def trivia_battle_offline_logic(page: ft.Page, go_home_fn):
             offline_main_column.controls.append(ft.Text(q_data.get("question",""), size=20, text_align=ft.TextAlign.CENTER))
             
             if s.get("last_q_correct_bool"):
-                offline_main_column.controls.append(ft.Text("✅ إجابة صحيحة!", color=ft.colors.GREEN_700, size=22, weight="bold"))
+                offline_main_column.controls.append(ft.Text("✅ إجابة صحيحة!", color=ft.Colors.GREEN_700, size=22, weight="bold"))
             else:
-                offline_main_column.controls.append(ft.Text(f"❌ إجابة خاطئة! الجواب الصحيح: {s.get('last_q_correct_answer_text','')}", color=ft.colors.RED_700, size=20, weight="bold"))
+                offline_main_column.controls.append(ft.Text(f"❌ إجابة خاطئة! الجواب الصحيح: {s.get('last_q_correct_answer_text','')}", color=ft.Colors.RED_700, size=20, weight="bold"))
 
             offline_main_column.controls.append(ft.Text("📊 النقاط الحالية:", size=20, weight="bold"))
             for p_name, p_score in s.get("scores",{}).items(): # Iterate player scores
@@ -381,7 +381,7 @@ def trivia_battle_online_logic(page: ft.Page, go_home_fn, send_action_fn, room_c
                 start_button = ft.ElevatedButton("🚀 بدء اللعبة", on_click=host_start_trivia_game, disabled=not can_start)
                 action_area.controls.append(start_button)
                 if not can_start:
-                    action_area.controls.append(ft.Text(f"تحتاج إلى {min_players - len(players_in_room)} لاعبين إضافيين على الأقل.", color=ft.colors.ORANGE_600))
+                    action_area.controls.append(ft.Text(f"تحتاج إلى {min_players - len(players_in_room)} لاعبين إضافيين على الأقل.", color=ft.Colors.ORANGE_600))
 
 
         elif current_phase == "QUESTION_DISPLAY_ONLINE":
@@ -393,7 +393,7 @@ def trivia_battle_online_logic(page: ft.Page, go_home_fn, send_action_fn, room_c
             player_q_count = gs.get("player_question_counts", {}).get(current_acting_player, 0)
             total_qs_for_player = gs.get("questions_per_player", 10)
 
-            question_display_online.controls.append(ft.Text(f"سؤال للاعب: {current_acting_player} (سؤاله {player_q_count + 1}/{total_qs_for_player})", size=18, weight="bold", color=ft.colors.BLUE_700))
+            question_display_online.controls.append(ft.Text(f"سؤال للاعب: {current_acting_player} (سؤاله {player_q_count + 1}/{total_qs_for_player})", size=18, weight="bold", color=ft.Colors.BLUE_700))
             question_display_online.controls.append(ft.Text(current_q_online.get("question", "تحميل السؤال..."), size=22, weight="bold", text_align=ft.TextAlign.CENTER))
             
             options_area_online = ft.Column(spacing=10, horizontal_alignment=ft.CrossAxisAlignment.CENTER)
@@ -416,9 +416,9 @@ def trivia_battle_online_logic(page: ft.Page, go_home_fn, send_action_fn, room_c
             question_display_online.controls.append(ft.Text(f"السؤال كان لـ {last_actor}: {q_data_online.get('question','')}", size=18, text_align=ft.TextAlign.CENTER))
             
             if gs.get("last_answer_was_correct"):
-                action_area.controls.append(ft.Text("✅ إجابة صحيحة!", color=ft.colors.GREEN_700, size=22, weight="bold"))
+                action_area.controls.append(ft.Text("✅ إجابة صحيحة!", color=ft.Colors.GREEN_700, size=22, weight="bold"))
             else:
-                action_area.controls.append(ft.Text(f"❌ إجابة خاطئة! الجواب: {gs.get('correct_answer_text_for_last_q','')}", color=ft.colors.RED_700, size=20, weight="bold"))
+                action_area.controls.append(ft.Text(f"❌ إجابة خاطئة! الجواب: {gs.get('correct_answer_text_for_last_q','')}", color=ft.Colors.RED_700, size=20, weight="bold"))
             
             if is_host:
                 action_area.controls.append(ft.ElevatedButton("السؤال/اللاعب التالي", on_click=lambda e: send_action_fn("NEXT_TRIVIA_QUESTION_HOST")))
@@ -464,7 +464,7 @@ def trivia_battle_online_logic(page: ft.Page, go_home_fn, send_action_fn, room_c
     if initial_room_data: update_ui_from_server_state_online_trivia(initial_room_data)
 
     online_main_container.controls.extend([
-        ft.Row([page_title, ft.IconButton(ft.icons.HOME, tooltip="العودة للرئيسية", on_click=go_home_fn)], alignment=ft.MainAxisAlignment.SPACE_BETWEEN),
+        ft.Row([page_title, ft.IconButton(ft.Icons.HOME, tooltip="العودة للرئيسية", on_click=go_home_fn)], alignment=ft.MainAxisAlignment.SPACE_BETWEEN),
         ft.Divider(), status_text, ft.Divider(),
         question_display_online, 
         ft.Row([

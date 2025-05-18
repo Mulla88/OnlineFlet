@@ -26,8 +26,8 @@ def mafia_offline_logic(page: ft.Page, go_home_fn):
             offline_main_column.controls.extend([
                 num_display_offline,
                 ft.Row([
-                    ft.IconButton(ft.icons.REMOVE, on_click=lambda e: update_num_offline_mafia(-1)),
-                    ft.IconButton(ft.icons.ADD, on_click=lambda e: update_num_offline_mafia(1)),
+                    ft.IconButton(ft.Icons.REMOVE, on_click=lambda e: update_num_offline_mafia(-1)),
+                    ft.IconButton(ft.Icons.ADD, on_click=lambda e: update_num_offline_mafia(1)),
                 ], alignment=ft.MainAxisAlignment.CENTER),
                 ft.ElevatedButton("التالي: إدخال الأسماء", on_click=lambda e: set_page_step("input_player_names"), width=200)
             ])
@@ -68,7 +68,7 @@ def mafia_offline_logic(page: ft.Page, go_home_fn):
             if role == "مافيا":
                 other_mafia = [p for p, r_val in s["roles"].items() if r_val == "مافيا" and p != player_name]
                 if other_mafia:
-                    offline_main_column.controls.append(ft.Text(f"زملاؤك في المافيا: {', '.join(other_mafia)}", color=ft.colors.RED_ACCENT_700, size=16))
+                    offline_main_column.controls.append(ft.Text(f"زملاؤك في المافيا: {', '.join(other_mafia)}", color=ft.Colors.RED_ACCENT_700, size=16))
             
             def next_player_role_reveal(e): 
                 s["current_player_role_reveal_idx"] += 1
@@ -105,7 +105,7 @@ def mafia_offline_logic(page: ft.Page, go_home_fn):
             # If it's detective action AND feedback has already been generated for this turn
             if s["page_step"] == "detective_action" and s.get("detective_action_result_text"):
                 offline_main_column.controls.append(
-                    ft.Text(s["detective_action_result_text"], size=18, weight="bold", color=ft.colors.BLUE_700)
+                    ft.Text(s["detective_action_result_text"], size=18, weight="bold", color=ft.Colors.BLUE_700)
                 )
                 offline_main_column.controls.append(
                     ft.ElevatedButton("متابعة إلى ملخص الليل", 
@@ -130,7 +130,7 @@ def mafia_offline_logic(page: ft.Page, go_home_fn):
                 else:
                     offline_main_column.controls.append(ft.Text("لا يوجد أهداف متاحة لهذا الدور.", italic=True))
 
-                error_text_mafia = ft.Text(color=ft.colors.RED_700) 
+                error_text_mafia = ft.Text(color=ft.Colors.RED_700) 
                 offline_main_column.controls.append(error_text_mafia)
 
                 def submit_night_action(e):
@@ -177,9 +177,9 @@ def mafia_offline_logic(page: ft.Page, go_home_fn):
             doctor_save = s["night_results"].get("doctor_save")
             
             if mafia_target and mafia_target == doctor_save:
-                offline_main_column.controls.append(ft.Text(f"✅ تم إنقاذ {mafia_target} بواسطة الطبيب!", color=ft.colors.GREEN_700))
+                offline_main_column.controls.append(ft.Text(f"✅ تم إنقاذ {mafia_target} بواسطة الطبيب!", color=ft.Colors.GREEN_700))
             elif mafia_target:
-                offline_main_column.controls.append(ft.Text(f"☠️ تم قتل {mafia_target} بواسطة المافيا!", color=ft.colors.RED_700))
+                offline_main_column.controls.append(ft.Text(f"☠️ تم قتل {mafia_target} بواسطة المافيا!", color=ft.Colors.RED_700))
                 if mafia_target not in s["eliminated_players"]:
                     s["eliminated_players"].append(mafia_target)
             else: 
@@ -232,7 +232,7 @@ def mafia_offline_logic(page: ft.Page, go_home_fn):
             offline_main_column.controls.append(ft.Text("📊 ملخص اليوم:", size=22, weight="bold"))
             day_elimination_log = next((log_entry for log_entry in reversed(s.get("log",[])) if "نهار" in log_entry and "تم طرد" in log_entry), None)
             if day_elimination_log:
-                offline_main_column.controls.append(ft.Text(day_elimination_log.replace(f"نهار {s['night_counter']}: ", ""), color=ft.colors.ORANGE_800, weight="bold"))
+                offline_main_column.controls.append(ft.Text(day_elimination_log.replace(f"نهار {s['night_counter']}: ", ""), color=ft.Colors.ORANGE_800, weight="bold"))
 
             offline_main_column.controls.append(ft.Text("اللاعبون المتبقون:", weight="bold"))
             for player in s["players"]:
@@ -249,9 +249,9 @@ def mafia_offline_logic(page: ft.Page, go_home_fn):
             offline_main_column.controls.append(ft.Text("🏁 انتهت اللعبة!", size=28, weight="bold"))
             winner = s.get("winner", "غير محدد")
             if winner == "المدنيون":
-                offline_main_column.controls.append(ft.Text("🏆 فاز المدنيون!", color=ft.colors.GREEN_700, size=24))
+                offline_main_column.controls.append(ft.Text("🏆 فاز المدنيون!", color=ft.Colors.GREEN_700, size=24))
             elif winner == "المافيا":
-                offline_main_column.controls.append(ft.Text("🏴 فازت المافيا!", color=ft.colors.RED_700, size=24))
+                offline_main_column.controls.append(ft.Text("🏴 فازت المافيا!", color=ft.Colors.RED_700, size=24))
             else:
                  offline_main_column.controls.append(ft.Text(f"نتيجة: {winner}", size=24))
 

@@ -56,8 +56,8 @@ def min_fina_offline_logic(page: ft.Page, go_home_fn):
             offline_main_column.controls.extend([
                 num_display_offline,
                 ft.Row([
-                    ft.IconButton(ft.icons.REMOVE, on_click=lambda e: update_num_offline(-1)),
-                    ft.IconButton(ft.icons.ADD, on_click=lambda e: update_num_offline(1)),
+                    ft.IconButton(ft.Icons.REMOVE, on_click=lambda e: update_num_offline(-1)),
+                    ft.IconButton(ft.Icons.ADD, on_click=lambda e: update_num_offline(1)),
                 ], alignment=ft.MainAxisAlignment.CENTER),
                 ft.ElevatedButton("التالي: إدخال الأسماء", on_click=lambda e: set_offline_page_step("input_player_names"), width=200)
             ])
@@ -90,7 +90,7 @@ def min_fina_offline_logic(page: ft.Page, go_home_fn):
                     offline_main_column.controls.append(ft.Text(f"فرص تغيير السؤال المتبقية: {s['skip_chances_offline']}", size=16))
                     offline_main_column.controls.append(ft.ElevatedButton("🔄 تغيير السؤال", on_click=lambda e: skip_question_offline(), width=200))
                 else:
-                    offline_main_column.controls.append(ft.Text("❌ لا يمكن تغيير السؤال.", size=16, color=ft.colors.RED_ACCENT_700))
+                    offline_main_column.controls.append(ft.Text("❌ لا يمكن تغيير السؤال.", size=16, color=ft.Colors.RED_ACCENT_700))
                 offline_main_column.controls.append(ft.ElevatedButton("🗳️ بدء التصويت", on_click=lambda e: start_voting_offline(), width=200))
 
         elif s["page_step"] == "voting_offline":
@@ -246,9 +246,9 @@ def min_fina_online_logic(page: ft.Page, go_home_fn, send_action_fn, room_code: 
                 if not can_host_start:
                     needed = gs.get("num_players_setting", min_players_to_start) - current_player_count
                     if needed > 0 :
-                         action_area.controls.append(ft.Text(f"تحتاج لـ {needed} لاعبين إضافيين للبدء.", color=ft.colors.ORANGE_ACCENT_700, text_align=ft.TextAlign.CENTER))
+                         action_area.controls.append(ft.Text(f"تحتاج لـ {needed} لاعبين إضافيين للبدء.", color=ft.Colors.ORANGE_ACCENT_700, text_align=ft.TextAlign.CENTER))
                     elif current_player_count < min_players_to_start:
-                         action_area.controls.append(ft.Text(f"تحتاج لـ {min_players_to_start - current_player_count} لاعبين إضافيين كحد أدنى.", color=ft.colors.RED_700, text_align=ft.TextAlign.CENTER))
+                         action_area.controls.append(ft.Text(f"تحتاج لـ {min_players_to_start - current_player_count} لاعبين إضافيين كحد أدنى.", color=ft.Colors.RED_700, text_align=ft.TextAlign.CENTER))
             else:
                  action_area.controls.append(ft.Text(f"الهوست يقوم بإعداد اللعبة لـ {gs.get('num_players_setting', min_players_to_start)} لاعبين.", text_align=ft.TextAlign.CENTER))
         
@@ -265,7 +265,7 @@ def min_fina_online_logic(page: ft.Page, go_home_fn, send_action_fn, room_code: 
                     action_area.controls.append(ft.Text(f"فرص تغيير السؤال: {gs['skip_chances_left']}", size=16))
                     action_area.controls.append(ft.ElevatedButton("🔄 تغيير السؤال", on_click=lambda e: send_action_fn("SKIP_QUESTION_HOST")))
                 else:
-                    action_area.controls.append(ft.Text("❌ لا يمكن تغيير السؤال.", size=16, color=ft.colors.RED_ACCENT_700))
+                    action_area.controls.append(ft.Text("❌ لا يمكن تغيير السؤال.", size=16, color=ft.Colors.RED_ACCENT_700))
                 action_area.controls.append(ft.ElevatedButton("🗳️ ابدأ التصويت على هذا السؤال", on_click=lambda e: send_action_fn("INITIATE_VOTING_HOST")))
             else: 
                 action_area.controls.append(ft.Text("في انتظار الهوست لبدء التصويت أو تغيير السؤال...", text_align=ft.TextAlign.CENTER))
@@ -358,7 +358,7 @@ def min_fina_online_logic(page: ft.Page, go_home_fn, send_action_fn, room_code: 
         status_text.value = "خطأ في الاتصال بغرفة 'من فينا'."
 
     online_main_container.controls.extend([
-        ft.Row([page_title, ft.IconButton(ft.icons.HOME, tooltip="العودة للرئيسية", on_click=go_home_fn)], alignment=ft.MainAxisAlignment.SPACE_BETWEEN),
+        ft.Row([page_title, ft.IconButton(ft.Icons.HOME, tooltip="العودة للرئيسية", on_click=go_home_fn)], alignment=ft.MainAxisAlignment.SPACE_BETWEEN),
         ft.Divider(), status_text, ft.Divider(),
         question_display_area, 
         ft.Row([
