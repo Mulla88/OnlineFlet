@@ -5,14 +5,13 @@ import random
 import threading
 import time
 from heads_up_words import HEADS_UP_WORDS 
-from flet import colors
 
 _game_state_heads_up = {} 
 
 def heads_up_game_offline_logic(page: ft.Page, go_home_fn):
     word_text_control = ft.Text("", size=50, weight="bold", text_align=ft.TextAlign.CENTER, height=100)
-    timer_text_control = ft.Text("الوقت: 60", size=30, color=colors.RED_ACCENT_700, weight="bold")
-    score_text_control = ft.Text("النقاط: 0", size=24, color=colors.GREEN_700)
+    timer_text_control = ft.Text("الوقت: 60", size=30, color=ft.colors.RED_ACCENT_700, weight="bold")
+    score_text_control = ft.Text("النقاط: 0", size=24, color=ft.colors.GREEN_700)
     
     main_content_area = ft.Column(
         expand=True, 
@@ -70,9 +69,9 @@ def heads_up_game_offline_logic(page: ft.Page, go_home_fn):
         word_text_control.value = new_word
 
         if new_word.startswith("انتهت الكلمات"):
-             word_text_control.color = colors.RED_700
+             word_text_control.color = ft.colors.RED_700
         else:
-             word_text_control.color = colors.BLACK # Default color
+             word_text_control.color = ft.colors.BLACK # Default color
         
         if page.client_storage:
             page.update(word_text_control)
@@ -149,7 +148,7 @@ def heads_up_game_offline_logic(page: ft.Page, go_home_fn):
         _game_state_heads_up["current_round_word_log"] = [] 
         
         score_text_control.value = "النقاط: 0.0" 
-        word_text_control.color = colors.BLACK 
+        word_text_control.color = ft.colors.BLACK 
         
         update_main_ui() 
         _display_new_active_word() 
@@ -213,7 +212,7 @@ def heads_up_game_offline_logic(page: ft.Page, go_home_fn):
             player_name = _game_state_heads_up["players_names_list"][_game_state_heads_up["current_player_index"]]
             main_content_area.controls.extend([
                 ft.Text(f"📱 أعطِ الجوال إلى: {player_name}", size=26, weight="bold", text_align=ft.TextAlign.CENTER),
-                ft.Text("تأكد من وضع الجوال بشكل أفقي على الرأس قبل البدء!", size=20, color=colors.ORANGE_ACCENT_700, text_align=ft.TextAlign.CENTER),
+                ft.Text("تأكد من وضع الجوال بشكل أفقي على الرأس قبل البدء!", size=20, color=ft.colors.ORANGE_ACCENT_700, text_align=ft.TextAlign.CENTER),
                 ft.Text("عندما تكون جاهزاً، اضغط 'ابدأ الجولة'", size=16, text_align=ft.TextAlign.CENTER),
                 ft.ElevatedButton("🚀 ابدأ الجولة", on_click=lambda e: start_player_round(), width=200, height=60)
             ])
@@ -225,10 +224,10 @@ def heads_up_game_offline_logic(page: ft.Page, go_home_fn):
                 word_text_control, 
                 score_text_control,
                 ft.Row([
-                    ft.ElevatedButton("✅ صحيح", on_click=handle_correct_guess, width=150, height=70, bgcolor=colors.GREEN_ACCENT_700, color=colors.WHITE),
-                    ft.ElevatedButton("⏭️ تخطي", on_click=handle_skip_action, width=150, height=70, bgcolor=colors.RED_ACCENT_700, color=colors.WHITE) 
+                    ft.ElevatedButton("✅ صحيح", on_click=handle_correct_guess, width=150, height=70, bgcolor=ft.colors.GREEN_ACCENT_700, color=ft.colors.WHITE),
+                    ft.ElevatedButton("⏭️ تخطي", on_click=handle_skip_action, width=150, height=70, bgcolor=ft.colors.RED_ACCENT_700, color=ft.colors.WHITE) 
                 ], alignment=ft.MainAxisAlignment.SPACE_AROUND, vertical_alignment=ft.CrossAxisAlignment.CENTER),
-                ft.ElevatedButton("⏹️ إنهاء الجولة مبكراً", on_click=lambda e: handle_round_end(None), width=250, height=40, bgcolor=colors.AMBER_ACCENT_100)
+                ft.ElevatedButton("⏹️ إنهاء الجولة مبكراً", on_click=lambda e: handle_round_end(None), width=250, height=40, bgcolor=ft.colors.AMBER_ACCENT_100)
             ])
 
         elif current_step == "round_summary":
@@ -245,7 +244,7 @@ def heads_up_game_offline_logic(page: ft.Page, go_home_fn):
             else:
                 for item in round_words:
                     status_symbol = "✅" if item["status"] == "correct" else "⏭️"
-                    color = colors.GREEN_700 if item["status"] == "correct" else colors.RED_700
+                    color = ft.colors.GREEN_700 if item["status"] == "correct" else ft.colors.RED_700
                     word_log_display.controls.append(ft.Text(f"{status_symbol} {item['word']}", color=color, text_align=ft.TextAlign.CENTER))
 
             main_content_area.controls.extend([

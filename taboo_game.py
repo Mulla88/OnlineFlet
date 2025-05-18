@@ -4,7 +4,6 @@ import random
 import threading
 import time
 from taboo_words import WORD_BANK 
-from flet import colors
 
 # --- OFFLINE MODE LOGIC ---
 _taboo_offline_state = {} 
@@ -14,8 +13,8 @@ def taboo_offline_logic(page: ft.Page, go_home_fn):
     word_display_offline_container = ft.Column(visible=False, horizontal_alignment=ft.CrossAxisAlignment.CENTER, spacing=5)
     score_display_offline_container = ft.Column(visible=False, horizontal_alignment=ft.CrossAxisAlignment.CENTER, spacing=3)
     
-    correct_btn_offline = ft.ElevatedButton("✅ إجابة صحيحة", visible=False, width=180, height=50, bgcolor=colors.GREEN_ACCENT_700, color=colors.WHITE)
-    skip_btn_offline = ft.ElevatedButton("⏭ تخطي/ممنوعة", visible=False, width=180, height=50, bgcolor=colors.RED_ACCENT_700, color=colors.WHITE)
+    correct_btn_offline = ft.ElevatedButton("✅ إجابة صحيحة", visible=False, width=180, height=50, bgcolor=ft.colors.GREEN_ACCENT_700, color=ft.colors.WHITE)
+    skip_btn_offline = ft.ElevatedButton("⏭ تخطي/ممنوعة", visible=False, width=180, height=50, bgcolor=ft.colors.RED_ACCENT_700, color=ft.colors.WHITE)
     timer_text_offline = ft.Text("الوقت: 60", size=24, weight="bold")
     last_round_warning_offline = ft.Text("", size=18, color="red", visible=False)
 
@@ -55,22 +54,22 @@ def taboo_offline_logic(page: ft.Page, go_home_fn):
         controls = []
         word_obj = _taboo_offline_state.get("current_word_obj")
         if word_obj:
-            controls.append(ft.Text(f"الكلمة السرية: {word_obj['secret']}", size=26, weight="bold", color=colors.BLUE_700, text_align=ft.TextAlign.CENTER))
+            controls.append(ft.Text(f"الكلمة السرية: {word_obj['secret']}", size=26, weight="bold", color=ft.colors.BLUE_700, text_align=ft.TextAlign.CENTER))
             controls.append(
                 ft.Row(
                     [
-                        ft.Icon(ft.icons.DO_NOT_DISTURB_ON_OUTLINED, color=colors.RED_700, size=24),
-                        ft.Text("كلمات ممنوعة:", size=20, color=colors.RED_700, weight="bold")
+                        ft.Icon(ft.icons.DO_NOT_DISTURB_ON_OUTLINED, color=ft.colors.RED_700, size=24),
+                        ft.Text("كلمات ممنوعة:", size=20, color=ft.colors.RED_700, weight="bold")
                     ], 
                     alignment=ft.MainAxisAlignment.CENTER, spacing=5
                 )
             )
             forbidden_list_col = ft.Column(horizontal_alignment=ft.CrossAxisAlignment.CENTER, spacing=2) 
             for w_forbidden in word_obj.get("forbidden", []):
-                forbidden_list_col.controls.append(ft.Text(f"• {w_forbidden}", color=colors.RED_700, size=16)) # Using bullet point
+                forbidden_list_col.controls.append(ft.Text(f"• {w_forbidden}", color=ft.colors.RED_700, size=16)) # Using bullet point
             controls.append(forbidden_list_col)
         elif _taboo_offline_state.get("current_word_obj") is None and _taboo_offline_state.get("step") == "playing_round":
-             controls.append(ft.Text("انتهت الكلمات!", size=24, color=colors.RED_700, text_align=ft.TextAlign.CENTER))
+             controls.append(ft.Text("انتهت الكلمات!", size=24, color=ft.colors.RED_700, text_align=ft.TextAlign.CENTER))
         return controls
 
     def _get_taboo_score_display_content():
@@ -215,12 +214,12 @@ def taboo_offline_logic(page: ft.Page, go_home_fn):
             skip_btn_offline.visible = True
             
             offline_main_column.controls.extend([
-                ft.Text(f"🎮 الجولة {s['round']} - فريق: {current_team}", size=20, color=colors.BLUE_700),
+                ft.Text(f"🎮 الجولة {s['round']} - فريق: {current_team}", size=20, color=ft.colors.BLUE_700),
                 last_round_warning_offline,
                 timer_text_offline,
                 word_display_offline_container, 
                 ft.Row([correct_btn_offline, skip_btn_offline], alignment=ft.MainAxisAlignment.CENTER, spacing=20),
-                ft.ElevatedButton("⏹ إنهاء الدور", on_click=end_taboo_round_offline, width=200, height=40, bgcolor=colors.AMBER_ACCENT_100),
+                ft.ElevatedButton("⏹ إنهاء الدور", on_click=end_taboo_round_offline, width=200, height=40, bgcolor=ft.colors.AMBER_ACCENT_100),
                 ft.Divider(height=10),
                 ft.Text("📊 النقاط:", size=20),
                 score_display_offline_container, 
@@ -232,14 +231,14 @@ def taboo_offline_logic(page: ft.Page, go_home_fn):
             words = summary_data.get("words", [])
             
             summary_controls_content = [ 
-                ft.Text(f"⏰ انتهى الوقت! فريق: {team_name}", size=22, weight="bold", color=colors.PRIMARY),
+                ft.Text(f"⏰ انتهى الوقت! فريق: {team_name}", size=22, weight="bold", color=ft.colors.PRIMARY),
                 ft.Text("🔤 الكلمات التي ظهرت:", size=20)
             ]
             if not words:
                 summary_controls_content.append(ft.Text("لم يتم لعب أي كلمات.", italic=True))
             for log_item in words:
                 summary_controls_content.append(ft.Text(f"- {log_item['word']} ({'✔' if log_item['correct'] else '✘'})", 
-                                                color=colors.GREEN_700 if log_item["correct"] else colors.RED_700))
+                                                color=ft.colors.GREEN_700 if log_item["correct"] else ft.colors.RED_700))
             
             def next_team_taboo_offline(e):
                 s["current_team_index"] += 1
@@ -359,7 +358,7 @@ def taboo_online_logic(page: ft.Page, go_home_fn, send_action_fn, room_code: str
             current_actor = gs.get("current_actor_name_online") 
             action_area_online.controls.append(ft.Text(f"استعداد فريق: {acting_team}", size=22, weight="bold", text_align=ft.TextAlign.CENTER))
             if current_player_name == current_actor:
-                action_area_online.controls.append(ft.Text("أنت من سيصف الكلمات هذه الجولة!", size=18, color=colors.GREEN_700, text_align=ft.TextAlign.CENTER))
+                action_area_online.controls.append(ft.Text("أنت من سيصف الكلمات هذه الجولة!", size=18, color=ft.colors.GREEN_700, text_align=ft.TextAlign.CENTER))
                 action_area_online.controls.append(ft.ElevatedButton("👀 عرض الكلمة والبدء", on_click=lambda e: send_action_fn("ACTOR_READY_START_ROUND_TABOO"), width=250, height=50))
             elif my_team_name == acting_team:
                 action_area_online.controls.append(ft.Text(f"{current_actor} من فريقكم سيصف الكلمات. استعدوا للتخمين!", size=18, text_align=ft.TextAlign.CENTER))
@@ -378,7 +377,7 @@ def taboo_online_logic(page: ft.Page, go_home_fn, send_action_fn, room_code: str
 
             word_card_display_online.controls.append(
                 ft.Text(secret_word_text, size=30, weight="bold", 
-                        color=(colors.BLUE_ACCENT_700 if current_player_name == current_actor or my_team_name != gs.get("current_acting_team_online") else colors.GREY_700)
+                        color=(ft.colors.BLUE_ACCENT_700 if current_player_name == current_actor or my_team_name != gs.get("current_acting_team_online") else ft.colors.GREY_700)
                        )
             )
 
@@ -387,22 +386,22 @@ def taboo_online_logic(page: ft.Page, go_home_fn, send_action_fn, room_code: str
                 word_card_display_online.controls.append(
                      ft.Row(
                         [
-                            ft.Icon(ft.icons.DO_NOT_DISTURB_ON_OUTLINED, color=colors.RED_700, size=24),
-                            ft.Text("كلمات ممنوعة:", size=20, color=colors.RED_700, weight="bold")
+                            ft.Icon(ft.icons.DO_NOT_DISTURB_ON_OUTLINED, color=ft.colors.RED_700, size=24),
+                            ft.Text("كلمات ممنوعة:", size=20, color=ft.colors.RED_700, weight="bold")
                         ], 
                         alignment=ft.MainAxisAlignment.CENTER, spacing=5
                     )
                 )
                 forbidden_col = ft.Column(horizontal_alignment=ft.CrossAxisAlignment.CENTER, spacing=2)
                 for fb_word in current_word_obj.get("forbidden", []):
-                    forbidden_col.controls.append(ft.Text(f"• {fb_word}", size=16, color=colors.RED_700)) # Using bullet
+                    forbidden_col.controls.append(ft.Text(f"• {fb_word}", size=16, color=ft.colors.RED_700)) # Using bullet
                 word_card_display_online.controls.append(forbidden_col)
             
             # Action buttons for actor
             if current_player_name == current_actor:
                 action_area_online.controls.extend([
-                    ft.ElevatedButton("✅ خمنوها صح!", key="taboo_correct", on_click=lambda e: send_action_fn("WORD_GUESSED_CORRECT_TABOO"), width=180, height=50, bgcolor=colors.GREEN_ACCENT_700, color=colors.WHITE),
-                    ft.ElevatedButton("⏭ تخطي / كلمة ممنوعة", key="taboo_skip", on_click=lambda e: send_action_fn("SKIP_WORD_TABOO"), width=180, height=50, bgcolor=colors.ORANGE_ACCENT_700, color=colors.WHITE),
+                    ft.ElevatedButton("✅ خمنوها صح!", key="taboo_correct", on_click=lambda e: send_action_fn("WORD_GUESSED_CORRECT_TABOO"), width=180, height=50, bgcolor=ft.colors.GREEN_ACCENT_700, color=ft.colors.WHITE),
+                    ft.ElevatedButton("⏭ تخطي / كلمة ممنوعة", key="taboo_skip", on_click=lambda e: send_action_fn("SKIP_WORD_TABOO"), width=180, height=50, bgcolor=ft.colors.ORANGE_ACCENT_700, color=ft.colors.WHITE),
                 ])
             elif my_team_name == gs.get("current_acting_team_online"): # Teammate of actor
                  action_area_online.controls.append(ft.Text(f"{current_actor} يصف الكلمات. استعدوا للتخمين!", size=16, italic=True, text_align=ft.TextAlign.CENTER))
@@ -416,11 +415,11 @@ def taboo_online_logic(page: ft.Page, go_home_fn, send_action_fn, room_code: str
             summary_round_num = summary_data.get("round_number", gs.get("current_game_round_online","?"))
             summary_words = summary_data.get("words", [])
             
-            word_list_controls = [ft.Text(f"- {log['word']} ({'✔' if log['correct'] else '✘'})", color=colors.GREEN_700 if log["correct"] else colors.RED_700) for log in summary_words]
+            word_list_controls = [ft.Text(f"- {log['word']} ({'✔' if log['correct'] else '✘'})", color=ft.colors.GREEN_700 if log["correct"] else ft.colors.RED_700) for log in summary_words]
             if not word_list_controls: word_list_controls.append(ft.Text("لم يتم لعب أي كلمات في هذا الدور.", italic=True))
 
             action_area_online.controls.extend([
-                ft.Text(f"⏰ ملخص دور فريق: {summary_team} (الجولة {summary_round_num})", size=22, weight="bold", color=colors.PRIMARY),
+                ft.Text(f"⏰ ملخص دور فريق: {summary_team} (الجولة {summary_round_num})", size=22, weight="bold", color=ft.colors.PRIMARY),
                 ft.Text("🔤 الكلمات:", size=20)] + word_list_controls)
             
             if is_host: 
@@ -468,7 +467,7 @@ def taboo_online_logic(page: ft.Page, go_home_fn, send_action_fn, room_code: str
         word_card_display_online, 
         ft.Row([
             ft.Container(content=ft.Column([player_list_display_online, ft.Divider(), team_score_display_online]), 
-                         padding=10, border=ft.border.all(1, colors.OUTLINE), border_radius=5, width=280, margin=ft.margin.only(right=10)),
+                         padding=10, border=ft.border.all(1, ft.colors.OUTLINE), border_radius=5, width=280, margin=ft.margin.only(right=10)),
             ft.VerticalDivider(),
             ft.Container(content=action_area_online, padding=10, expand=True, alignment=ft.alignment.top_center)
         ], vertical_alignment=ft.CrossAxisAlignment.START, expand=True),

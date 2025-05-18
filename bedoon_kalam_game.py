@@ -3,8 +3,7 @@ import flet as ft
 import random
 import threading 
 import time      
-from bedoon_kalam_words import WORD_BANK 
-from flet import colors
+from bedoon_kalam_words import WORD_BANK
 
 # --- OFFLINE MODE LOGIC ---
 def bedoon_kalam_offline_logic(page: ft.Page, go_home_fn):
@@ -15,8 +14,8 @@ def bedoon_kalam_offline_logic(page: ft.Page, go_home_fn):
     word_display_offline_container = ft.Column(visible=False, horizontal_alignment=ft.CrossAxisAlignment.CENTER)
     score_display_offline_container = ft.Column(visible=False, horizontal_alignment=ft.CrossAxisAlignment.CENTER)
     
-    correct_btn_offline = ft.ElevatedButton("✅ إجابة صحيحة", visible=False, width=180, height=50, bgcolor=colors.GREEN_ACCENT_700, color=colors.WHITE)
-    skip_btn_offline = ft.ElevatedButton("⏭ تخطي", visible=False, width=180, height=50, bgcolor=colors.RED_ACCENT_700, color=colors.WHITE)
+    correct_btn_offline = ft.ElevatedButton("✅ إجابة صحيحة", visible=False, width=180, height=50, bgcolor=ft.colors.GREEN_ACCENT_700, color=ft.colors.WHITE)
+    skip_btn_offline = ft.ElevatedButton("⏭ تخطي", visible=False, width=180, height=50, bgcolor=ft.colors.RED_ACCENT_700, color=ft.colors.WHITE)
     timer_text_offline = ft.Text("الوقت: 90 ثانية", size=24, weight="bold")
     last_round_warning_offline = ft.Text("", size=18, color="red", visible=False)
     
@@ -57,9 +56,9 @@ def bedoon_kalam_offline_logic(page: ft.Page, go_home_fn):
         controls = []
         word = offline_state.get("current_word") 
         if word and word != "انتهت الكلمات!":
-            controls.append(ft.Text(f"الكلمة: {word}", size=30, weight="bold", color=colors.BLUE_700, text_align=ft.TextAlign.CENTER))
+            controls.append(ft.Text(f"الكلمة: {word}", size=30, weight="bold", color=ft.colors.BLUE_700, text_align=ft.TextAlign.CENTER))
         elif word: 
-            controls.append(ft.Text(word, size=24, color=colors.RED_700, text_align=ft.TextAlign.CENTER))
+            controls.append(ft.Text(word, size=24, color=ft.colors.RED_700, text_align=ft.TextAlign.CENTER))
         return controls
 
     def _get_score_display_content():
@@ -222,12 +221,12 @@ def bedoon_kalam_offline_logic(page: ft.Page, go_home_fn):
             last_round_warning_offline.value = "⚠️ هذا هو الدور الأخير!" if last_round_warning_offline.visible else ""
 
             offline_main_column.controls.extend([
-                ft.Text(f"🎮 الجولة {s['round']} - فريق: {current_team}", size=20, color=colors.BLUE_700),
+                ft.Text(f"🎮 الجولة {s['round']} - فريق: {current_team}", size=20, color=ft.colors.BLUE_700),
                 last_round_warning_offline,
                 timer_text_offline,
                 word_display_offline_container, # Add the container
                 ft.Row([correct_btn_offline, skip_btn_offline], alignment=ft.MainAxisAlignment.CENTER, spacing=20),
-                ft.ElevatedButton("⏹ إنهاء الجولة مبكراً", on_click=handle_end_round_offline, width=250, height=40, bgcolor=colors.RED_ACCENT_100),
+                ft.ElevatedButton("⏹ إنهاء الجولة مبكراً", on_click=handle_end_round_offline, width=250, height=40, bgcolor=ft.colors.RED_ACCENT_100),
                 ft.Divider(height=20),
                 ft.Text("📊 النقاط:", size=20, weight="bold"),
                 score_display_offline_container # Add the container
@@ -239,7 +238,7 @@ def bedoon_kalam_offline_logic(page: ft.Page, go_home_fn):
             
             word_list_controls = [
                 ft.Text(f"- {log['word']} ({'✔' if log['correct'] else '✘'})", 
-                          color=colors.GREEN_700 if log["correct"] else colors.RED_700)
+                          color=ft.colors.GREEN_700 if log["correct"] else ft.colors.RED_700)
                 for log in summary_words
             ]
             if not word_list_controls:
@@ -247,7 +246,7 @@ def bedoon_kalam_offline_logic(page: ft.Page, go_home_fn):
 
             summary_column_content = ft.Column( # Renamed to avoid confusion
                 controls=[
-                    ft.Text(f"⏰ انتهى وقت فريق: {summary_team}", size=22, weight="bold", color=colors.PRIMARY),
+                    ft.Text(f"⏰ انتهى وقت فريق: {summary_team}", size=22, weight="bold", color=ft.colors.PRIMARY),
                     ft.Text("🔤 الكلمات التي ظهرت في هذا الدور:", size=20),
                 ] + word_list_controls,
                 scroll=ft.ScrollMode.AUTO,
@@ -392,7 +391,7 @@ def bedoon_kalam_online_logic(page: ft.Page, go_home_fn, send_action_fn, room_co
             if my_team == acting_team:
                 action_area.controls.append(ft.Text(f"استعد يا فريق {acting_team}!", size=22, weight="bold", text_align=ft.TextAlign.CENTER))
                 if current_player_name == current_actor:
-                    action_area.controls.append(ft.Text("أنت من سيمثل هذه الجولة!", size=18, color=colors.GREEN_700, text_align=ft.TextAlign.CENTER))
+                    action_area.controls.append(ft.Text("أنت من سيمثل هذه الجولة!", size=18, color=ft.colors.GREEN_700, text_align=ft.TextAlign.CENTER))
                     action_area.controls.append(ft.ElevatedButton("👀 عرض الكلمة والبدء", on_click=lambda e: send_action_fn("ACTOR_READY_START_ROUND"), width=250, height=50))
                 else:
                     action_area.controls.append(ft.Text(f"{current_actor} من فريقكم سيمثل. استعدوا للتخمين!", size=18, text_align=ft.TextAlign.CENTER))
@@ -409,19 +408,19 @@ def bedoon_kalam_online_logic(page: ft.Page, go_home_fn, send_action_fn, room_co
             
             if current_player_name == current_actor: 
                 word_to_act_display.controls.append(ft.Text("مثل الكلمة التالية:", size=20))
-                word_to_act_display.controls.append(ft.Text(current_word, size=32, weight="bold", color=colors.BLUE_ACCENT_700))
+                word_to_act_display.controls.append(ft.Text(current_word, size=32, weight="bold", color=ft.colors.BLUE_ACCENT_700))
                 action_area.controls.extend([
-                    ft.ElevatedButton("✅ خمنوها صح!", on_click=lambda e: send_action_fn("WORD_GUESSED_CORRECT"), width=180, height=50, bgcolor=colors.GREEN_ACCENT_700, color=colors.WHITE),
-                    ft.ElevatedButton("⏭ تخطي الكلمة", on_click=lambda e: send_action_fn("SKIP_WORD"), width=180, height=50, bgcolor=colors.ORANGE_ACCENT_700, color=colors.WHITE),
+                    ft.ElevatedButton("✅ خمنوها صح!", on_click=lambda e: send_action_fn("WORD_GUESSED_CORRECT"), width=180, height=50, bgcolor=ft.colors.GREEN_ACCENT_700, color=ft.colors.WHITE),
+                    ft.ElevatedButton("⏭ تخطي الكلمة", on_click=lambda e: send_action_fn("SKIP_WORD"), width=180, height=50, bgcolor=ft.colors.ORANGE_ACCENT_700, color=ft.colors.WHITE),
                 ])
             elif my_team == acting_team: 
                 word_to_act_display.controls.append(ft.Text(f"فريقك يمثل! حاول تخمين الكلمة التي يمثلها {current_actor}.", size=18, text_align=ft.TextAlign.CENTER))
-                word_to_act_display.controls.append(ft.Text("الكلمة: ؟؟؟؟؟", size=28, weight="bold", color=colors.GREY_700)) 
+                word_to_act_display.controls.append(ft.Text("الكلمة: ؟؟؟؟؟", size=28, weight="bold", color=ft.colors.GREY_700)) 
 
             else: # Spectator from other team
                 word_to_act_display.controls.append(ft.Text(f"فريق {acting_team} يمثل الآن. {current_actor} هو الممثل.", size=18, text_align=ft.TextAlign.CENTER))
                 # MODIFIED: Spectators NOW see the word
-                word_to_act_display.controls.append(ft.Text(f"الكلمة التي يمثلونها: {current_word}", size=24, weight="bold", color=colors.DEEP_ORANGE_ACCENT_200)) 
+                word_to_act_display.controls.append(ft.Text(f"الكلمة التي يمثلونها: {current_word}", size=24, weight="bold", color=ft.colors.DEEP_ORANGE_ACCENT_200)) 
                 action_area.controls.append(ft.Text("لا يمكنك التخمين الآن.", size=16, italic=True))
 
         elif current_phase == "ROUND_SUMMARY":
@@ -432,14 +431,14 @@ def bedoon_kalam_online_logic(page: ft.Page, go_home_fn, send_action_fn, room_co
             
             word_list_controls = [
                 ft.Text(f"- {log['word']} ({'✔' if log['correct'] else '✘'})", 
-                          color=colors.GREEN_700 if log["correct"] else colors.RED_700)
+                          color=ft.colors.GREEN_700 if log["correct"] else ft.colors.RED_700)
                 for log in summary_words
             ]
             if not word_list_controls:
                 word_list_controls.append(ft.Text("لم يتم لعب أي كلمات في هذا الدور.", italic=True))
 
             action_area.controls.extend([
-                ft.Text(f"⏰ ملخص دور فريق: {summary_team} (الجولة {summary_round_num})", size=22, weight="bold", color=colors.PRIMARY),
+                ft.Text(f"⏰ ملخص دور فريق: {summary_team} (الجولة {summary_round_num})", size=22, weight="bold", color=ft.colors.PRIMARY),
                 ft.Text("🔤 الكلمات:", size=20),
             ] + word_list_controls)
             
@@ -523,7 +522,7 @@ def bedoon_kalam_online_logic(page: ft.Page, go_home_fn, send_action_fn, room_co
                         ft.Divider(),
                         team_score_display
                     ], spacing=10),
-                    padding=10, border=ft.border.all(1, colors.OUTLINE), border_radius=5,
+                    padding=10, border=ft.border.all(1, ft.colors.OUTLINE), border_radius=5,
                     width=280, margin=ft.margin.only(right=10), alignment=ft.alignment.top_left,
                 ),
                 ft.VerticalDivider(width=10),

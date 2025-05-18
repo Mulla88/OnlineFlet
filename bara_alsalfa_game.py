@@ -2,7 +2,6 @@
 import flet as ft
 import random
 from categories import categories 
-from flet import colors
 
 # --- OFFLINE MODE LOGIC ---
 def bara_alsalfa_offline_logic(page: ft.Page, go_home_fn):
@@ -92,11 +91,11 @@ def bara_alsalfa_offline_logic(page: ft.Page, go_home_fn):
             role = s["roles"][player_name]
             offline_content_area.controls.extend([
                 ft.Text(f"{player_name}، دورك هو:", size=22),
-                ft.Text(role, size=28, weight="bold", color=(colors.RED_ACCENT_700 if role == "برة السالفة" else colors.GREEN_ACCENT_700)),
+                ft.Text(role, size=28, weight="bold", color=(ft.colors.RED_ACCENT_700 if role == "برة السالفة" else ft.colors.GREEN_ACCENT_700)),
                 ft.Text(f"القائمة: {s['selected_category']}", size=18),
             ])
             if role == "داخل السالفة" and s.get("game_word"):
-                offline_content_area.controls.append(ft.Text(f"الكلمة السرية هي: {s['game_word']}", size=20, color=colors.BLUE_700))
+                offline_content_area.controls.append(ft.Text(f"الكلمة السرية هي: {s['game_word']}", size=20, color=ft.colors.BLUE_700))
             
             offline_content_area.controls.append(ft.ElevatedButton("فهمت، التالي", on_click=next_player_role_reveal_offline, width=200, height=50))
 
@@ -157,13 +156,13 @@ def bara_alsalfa_offline_logic(page: ft.Page, go_home_fn):
                  ))
 
             offline_content_area.controls.extend([
-                ft.Text(f"الشخص الذي كان 'برة السالفة' هو: {s['bara_player']}", size=20, color=colors.RED_700),
+                ft.Text(f"الشخص الذي كان 'برة السالفة' هو: {s['bara_player']}", size=20, color=ft.colors.RED_700),
                 ft.Text("النقاط من التصويت الصحيح:", size=18)
             ])
             initial_round_scores = s.get("initial_round_scores_from_voting", {})
             for p_name, score_increase in initial_round_scores.items():
                 if score_increase > 0 : 
-                    offline_content_area.controls.append(ft.Text(f"{p_name}: +{score_increase} نقاط", color=colors.GREEN))
+                    offline_content_area.controls.append(ft.Text(f"{p_name}: +{score_increase} نقاط", color=ft.colors.GREEN))
             
             offline_content_area.controls.append(ft.ElevatedButton(f"دع {s['bara_player']} يخمن الكلمة", on_click=lambda e: set_offline_page("bara_guess_word_offline"), width=250, height=50))
 
@@ -195,7 +194,7 @@ def bara_alsalfa_offline_logic(page: ft.Page, go_home_fn):
             offline_content_area.controls.extend([
                 ft.Text("🎉 انتهت الجولة!", size=26, weight="bold"),
                 ft.Text(s["bara_guess_result_text"], size=20, weight="bold", text_align=ft.TextAlign.CENTER,
-                          color=(colors.GREEN_700 if "صحيح" in s["bara_guess_result_text"] else colors.RED_700)),
+                          color=(ft.colors.GREEN_700 if "صحيح" in s["bara_guess_result_text"] else ft.colors.RED_700)),
                 ft.Text("النقاط الإجمالية:", size=22)
             ])
             score_rows = []
@@ -413,12 +412,12 @@ def bara_alsalfa_online_logic(page: ft.Page, go_home_fn, send_action_fn, room_co
                 start_game_button_lobby.disabled = not can_start_game
 
                 if not gs.get("selected_category"):
-                    action_area.controls.append(ft.Text("(اختر قائمة أولاً لتفعيل زر بدء اللعبة)", size=12, color=colors.ON_SURFACE_VARIANT, text_align=ft.TextAlign.CENTER))
+                    action_area.controls.append(ft.Text("(اختر قائمة أولاً لتفعيل زر بدء اللعبة)", size=12, color=ft.colors.ON_SURFACE_VARIANT, text_align=ft.TextAlign.CENTER))
                 elif len(players_in_room) < gs.get("min_players_for_game", 3):
                     remaining_to_join = gs.get("min_players_for_game", 3) - len(players_in_room)
-                    action_area.controls.append(ft.Text(f" (تحتاج {remaining_to_join} لاعبين إضافيين لبدء اللعبة)", size=12, color=colors.ON_SURFACE_VARIANT, text_align=ft.TextAlign.CENTER))
+                    action_area.controls.append(ft.Text(f" (تحتاج {remaining_to_join} لاعبين إضافيين لبدء اللعبة)", size=12, color=ft.colors.ON_SURFACE_VARIANT, text_align=ft.TextAlign.CENTER))
                 else: 
-                     action_area.controls.append(ft.Text("(جاهز لبدء اللعبة!)", size=12, color=colors.GREEN_ACCENT_700, text_align=ft.TextAlign.CENTER))
+                     action_area.controls.append(ft.Text("(جاهز لبدء اللعبة!)", size=12, color=ft.colors.GREEN_ACCENT_700, text_align=ft.TextAlign.CENTER))
             
             else: 
                 action_area.controls.append(ft.Text("في انتظار الهوست لاختيار القائمة وبدء اللعبة...", text_align=ft.TextAlign.CENTER))
@@ -437,9 +436,9 @@ def bara_alsalfa_online_logic(page: ft.Page, go_home_fn, send_action_fn, room_co
 
                 if not can_start_game_cat_selected:
                     remaining_to_join = gs.get("min_players_for_game", 3) - len(players_in_room)
-                    action_area.controls.append(ft.Text(f" (تحتاج {remaining_to_join} لاعبين إضافيين لبدء اللعبة)", text_align=ft.TextAlign.CENTER, size=12, color=colors.ON_SURFACE_VARIANT))
+                    action_area.controls.append(ft.Text(f" (تحتاج {remaining_to_join} لاعبين إضافيين لبدء اللعبة)", text_align=ft.TextAlign.CENTER, size=12, color=ft.colors.ON_SURFACE_VARIANT))
                 else:
-                    action_area.controls.append(ft.Text("(جاهز لبدء اللعبة!)", size=12, color=colors.GREEN_ACCENT_700, text_align=ft.TextAlign.CENTER))
+                    action_area.controls.append(ft.Text("(جاهز لبدء اللعبة!)", size=12, color=ft.colors.GREEN_ACCENT_700, text_align=ft.TextAlign.CENTER))
             
             else: 
                 action_area.controls.append(ft.Text("في انتظار الهوست لبدء اللعبة...", text_align=ft.TextAlign.CENTER))
@@ -455,11 +454,11 @@ def bara_alsalfa_online_logic(page: ft.Page, go_home_fn, send_action_fn, room_co
                 my_role_data = players_in_room.get(current_player_name, {})
                 my_role = my_role_data.get("role", "...")
                 role_display_area.controls.extend([
-                    ft.Text(f"دورك هو: {my_role}", size=24, weight="bold", color=(colors.RED_ACCENT_700 if my_role == "برة السالفة" else colors.GREEN_ACCENT_700)),
+                    ft.Text(f"دورك هو: {my_role}", size=24, weight="bold", color=(ft.colors.RED_ACCENT_700 if my_role == "برة السالفة" else ft.colors.GREEN_ACCENT_700)),
                     ft.Text(f"القائمة: {gs.get('selected_category', '...')}", size=18)
                 ])
                 if my_role == "داخل السالفة" and gs.get("game_word"):
-                    role_display_area.controls.append(ft.Text(f"الكلمة السرية: {gs.get('game_word', '...')}", size=20, color=colors.BLUE_700))
+                    role_display_area.controls.append(ft.Text(f"الكلمة السرية: {gs.get('game_word', '...')}", size=20, color=ft.colors.BLUE_700))
                 role_display_area.controls.append(ft.ElevatedButton("✅ تم، فهمت دوري", on_click=lambda e: send_action_fn("PLAYER_ACK_ROLE"), width=200, height=40))
                 action_area.controls.append(ft.Text("الرجاء تفقد دورك في الأعلى ثم اضغط 'تم'.", text_align=ft.TextAlign.CENTER))
             elif player_to_see_role:
@@ -523,13 +522,13 @@ def bara_alsalfa_online_logic(page: ft.Page, go_home_fn, send_action_fn, room_co
             else:
                 action_area.controls.append(ft.Text("لم يتم تسجيل أي أصوات.", text_align=ft.TextAlign.CENTER))
 
-            action_area.controls.append(ft.Text(f"'برة السالفة' كان: {gs.get('bara_player', '...')}", size=20, color=colors.RED_700, text_align=ft.TextAlign.CENTER))
+            action_area.controls.append(ft.Text(f"'برة السالفة' كان: {gs.get('bara_player', '...')}", size=20, color=ft.colors.RED_700, text_align=ft.TextAlign.CENTER))
             
             round_scores_for_display = gs.get("round_scores", {})
             points_text_elements = []
             for p_name_iter, score_val in round_scores_for_display.items():
                 if score_val != 0 : 
-                    points_text_elements.append(ft.Text(f"{p_name_iter}: {score_val} نقاط", color=colors.GREEN, text_align=ft.TextAlign.CENTER))
+                    points_text_elements.append(ft.Text(f"{p_name_iter}: {score_val} نقاط", color=ft.colors.GREEN, text_align=ft.TextAlign.CENTER))
             
             if points_text_elements:
                 action_area.controls.append(ft.Text("النقاط المكتسبة (قبل تخمين 'برة السالفة'):", size=18, text_align=ft.TextAlign.CENTER))
@@ -558,7 +557,7 @@ def bara_alsalfa_online_logic(page: ft.Page, go_home_fn, send_action_fn, room_co
             action_area.controls.extend([
                 ft.Text("🎉 انتهت الجولة!", size=26, weight="bold", text_align=ft.TextAlign.CENTER),
                 ft.Text(gs.get("bara_guess_result", "..."), size=20, weight="bold", text_align=ft.TextAlign.CENTER, 
-                          color=(colors.GREEN_700 if "صحيح" in gs.get("bara_guess_result", "") else colors.RED_700)),
+                          color=(ft.colors.GREEN_700 if "صحيح" in gs.get("bara_guess_result", "") else ft.colors.RED_700)),
                 ft.Text("النقاط الإجمالية:", size=22, text_align=ft.TextAlign.CENTER)
             ])
             
@@ -643,7 +642,7 @@ def bara_alsalfa_online_logic(page: ft.Page, go_home_fn, send_action_fn, room_co
             [
                 ft.Container(
                     content=player_list_display, 
-                    padding=10, border=ft.border.all(1, colors.OUTLINE), border_radius=5,
+                    padding=10, border=ft.border.all(1, ft.colors.OUTLINE), border_radius=5,
                     width=250, margin=ft.margin.only(right=10), alignment=ft.alignment.top_left,
                 ),
                 ft.VerticalDivider(width=10),

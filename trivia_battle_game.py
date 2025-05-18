@@ -2,7 +2,6 @@
 import flet as ft
 import random
 import importlib 
-from flet import colors
 import os 
 
 # --- OFFLINE MODE LOGIC ---
@@ -112,7 +111,7 @@ def trivia_battle_offline_logic(page: ft.Page, go_home_fn):
             q_data = s.get("current_question_data")
             if not q_data:
                 # ... (error handling same)
-                offline_main_column.controls.append(ft.Text("خطأ: لا يوجد سؤال حالي أو انتهت الأسئلة.", color=colors.RED))
+                offline_main_column.controls.append(ft.Text("خطأ: لا يوجد سؤال حالي أو انتهت الأسئلة.", color=ft.colors.RED))
                 offline_main_column.controls.append(ft.ElevatedButton("النتائج النهائية", on_click=lambda e: set_offline_trivia_step("results")))
                 if page.client_storage: page.update(); return
 
@@ -122,7 +121,7 @@ def trivia_battle_offline_logic(page: ft.Page, go_home_fn):
             player_q_count = s["player_question_counts"].get(current_player_name, 0)
             total_qs_for_player = s["questions_per_player"]
 
-            offline_main_column.controls.append(ft.Text(f"❓ سؤال للاعب: {current_player_name} (سؤاله رقم {player_q_count + 1}/{total_qs_for_player})", size=20, weight="bold", color=colors.BLUE_700)) # CHANGED
+            offline_main_column.controls.append(ft.Text(f"❓ سؤال للاعب: {current_player_name} (سؤاله رقم {player_q_count + 1}/{total_qs_for_player})", size=20, weight="bold", color=ft.colors.BLUE_700)) # CHANGED
             offline_main_column.controls.append(ft.Text(q_data.get("question",""), size=22, text_align=ft.TextAlign.CENTER, weight="bold", selectable=True))
             
             options_column = ft.Column(spacing=10, horizontal_alignment=ft.CrossAxisAlignment.CENTER, width=350) 
@@ -141,9 +140,9 @@ def trivia_battle_offline_logic(page: ft.Page, go_home_fn):
             offline_main_column.controls.append(ft.Text(q_data.get("question",""), size=20, text_align=ft.TextAlign.CENTER))
             
             if s.get("last_q_correct_bool"):
-                offline_main_column.controls.append(ft.Text("✅ إجابة صحيحة!", color=colors.GREEN_700, size=22, weight="bold"))
+                offline_main_column.controls.append(ft.Text("✅ إجابة صحيحة!", color=ft.colors.GREEN_700, size=22, weight="bold"))
             else:
-                offline_main_column.controls.append(ft.Text(f"❌ إجابة خاطئة! الجواب الصحيح: {s.get('last_q_correct_answer_text','')}", color=colors.RED_700, size=20, weight="bold"))
+                offline_main_column.controls.append(ft.Text(f"❌ إجابة خاطئة! الجواب الصحيح: {s.get('last_q_correct_answer_text','')}", color=ft.colors.RED_700, size=20, weight="bold"))
 
             offline_main_column.controls.append(ft.Text("📊 النقاط الحالية:", size=20, weight="bold"))
             for p_name, p_score in s.get("scores",{}).items(): # Iterate player scores
@@ -382,7 +381,7 @@ def trivia_battle_online_logic(page: ft.Page, go_home_fn, send_action_fn, room_c
                 start_button = ft.ElevatedButton("🚀 بدء اللعبة", on_click=host_start_trivia_game, disabled=not can_start)
                 action_area.controls.append(start_button)
                 if not can_start:
-                    action_area.controls.append(ft.Text(f"تحتاج إلى {min_players - len(players_in_room)} لاعبين إضافيين على الأقل.", color=colors.ORANGE_600))
+                    action_area.controls.append(ft.Text(f"تحتاج إلى {min_players - len(players_in_room)} لاعبين إضافيين على الأقل.", color=ft.colors.ORANGE_600))
 
 
         elif current_phase == "QUESTION_DISPLAY_ONLINE":
@@ -394,7 +393,7 @@ def trivia_battle_online_logic(page: ft.Page, go_home_fn, send_action_fn, room_c
             player_q_count = gs.get("player_question_counts", {}).get(current_acting_player, 0)
             total_qs_for_player = gs.get("questions_per_player", 10)
 
-            question_display_online.controls.append(ft.Text(f"سؤال للاعب: {current_acting_player} (سؤاله {player_q_count + 1}/{total_qs_for_player})", size=18, weight="bold", color=colors.BLUE_700))
+            question_display_online.controls.append(ft.Text(f"سؤال للاعب: {current_acting_player} (سؤاله {player_q_count + 1}/{total_qs_for_player})", size=18, weight="bold", color=ft.colors.BLUE_700))
             question_display_online.controls.append(ft.Text(current_q_online.get("question", "تحميل السؤال..."), size=22, weight="bold", text_align=ft.TextAlign.CENTER))
             
             options_area_online = ft.Column(spacing=10, horizontal_alignment=ft.CrossAxisAlignment.CENTER)
@@ -417,9 +416,9 @@ def trivia_battle_online_logic(page: ft.Page, go_home_fn, send_action_fn, room_c
             question_display_online.controls.append(ft.Text(f"السؤال كان لـ {last_actor}: {q_data_online.get('question','')}", size=18, text_align=ft.TextAlign.CENTER))
             
             if gs.get("last_answer_was_correct"):
-                action_area.controls.append(ft.Text("✅ إجابة صحيحة!", color=colors.GREEN_700, size=22, weight="bold"))
+                action_area.controls.append(ft.Text("✅ إجابة صحيحة!", color=ft.colors.GREEN_700, size=22, weight="bold"))
             else:
-                action_area.controls.append(ft.Text(f"❌ إجابة خاطئة! الجواب: {gs.get('correct_answer_text_for_last_q','')}", color=colors.RED_700, size=20, weight="bold"))
+                action_area.controls.append(ft.Text(f"❌ إجابة خاطئة! الجواب: {gs.get('correct_answer_text_for_last_q','')}", color=ft.colors.RED_700, size=20, weight="bold"))
             
             if is_host:
                 action_area.controls.append(ft.ElevatedButton("السؤال/اللاعب التالي", on_click=lambda e: send_action_fn("NEXT_TRIVIA_QUESTION_HOST")))
@@ -470,7 +469,7 @@ def trivia_battle_online_logic(page: ft.Page, go_home_fn, send_action_fn, room_c
         question_display_online, 
         ft.Row([
             ft.Container(content=ft.Column([player_list_display, ft.Divider(), player_score_display_online]), # CHANGED to player_score_display_online
-                         padding=10, border=ft.border.all(1, colors.OUTLINE), border_radius=5, width=280, margin=ft.margin.only(right=10)),
+                         padding=10, border=ft.border.all(1, ft.colors.OUTLINE), border_radius=5, width=280, margin=ft.margin.only(right=10)),
             ft.VerticalDivider(),
             ft.Container(content=action_area, padding=10, expand=True, alignment=ft.alignment.top_center)
         ], vertical_alignment=ft.CrossAxisAlignment.START, expand=True),
