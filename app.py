@@ -535,46 +535,30 @@ def main(page: ft.Page):
         print(f"--- ROUTE CHANGE END --- New top view: {page.views[-1].route if page.views else 'EMPTY'}, page.route is now: {page.route}")
 
 
+# app.py
+
     def view_pop(e: ft.ViewPopEvent):
-        current_view_route_being_popped = e.view.route if e.view else "N/A" # e.view can be None
-        current_page_views_count = len(page.views)
-        print(f"--- VIEW POP START --- Popping: '{current_view_route_being_popped}'. page.views count BEFORE Flet's internal pop: {current_page_views_count}")
+        # e.view is the Flet View object that Flet is about to pop.
+        current_view_route_being_popped = e.view.route if e.view else "N/A"
+        print(f"--- VIEW POP START --- Popping: '{current_view_route_being_popped}'. page.views count BEFORE Flet's internal pop: {len(page.views)}")
 
-        # If e.view is None, it's a problematic pop event. Safest to go home.
-        if not e.view or not e.view.route: # More robust check
-            print("ViewPopEvent: e.view or e.view.route is None. Navigating to home ('/').")
-            page.go("/")
-            print(f"--- VIEW POP END (e.view was None or no route) ---")
-            return
-
-        # Handle special case: Leaving an online game view
-        if e.view.route.startswith("/game/") and "/online/" in e.view.route:
+        # 1. Handle special case: Leaving an online game view
+        if e.view and e.view.route and e.view.route.startswith("/game/") and "/online/" in e.view.route:
             print(f"Online game view pop detected for route: {e.view.route}. Triggering go_home.")
             go_home() 
             print(f"--- VIEW POP END (after go_home for online game) ---")
             return 
 
-        # For all other views (non-online game views)
-        # Flet is about to pop e.view. page.views still contains it.
-        if current_page_views_count > 1:
-            # The view to navigate back to is the one before e.view in the current stack
-            destination_route = page.views[-2].route 
-            print(f"Standard pop. Navigating to previous view: {destination_route}")
-            page.go(destination_route)
-        else:
-            # Only one view was on the stack (e.g., the home page), or stack was empty.
-            # A "pop" from the very first view should logically lead back to the home page (or do nothing if already home).
-            print(f"View pop on root view or shallow stack (count: {current_page_views_count}). Navigating to home ('/').")
-            if page.route != "/": # Avoid redundant page.go("/") if already there
-                 page.go("/")
-            else: # Already on home, browser back might go out of app. Flet might just stay.
-                 print("Already on home page, pop event likely from browser trying to go further back.")
-                 # No page.go() here, let browser handle it or Flet keep state.
-                 # However, if this still causes issues, force page.go("/")
-                 # page.go("/") # Uncomment if simply passing causes issues
-                 pass
-        
-        print(f"--- VIEW POP END ---")
+        # 2. For all other views, DO NOTHING EXPLICITLY.
+        # Let Flet's default mechanism handle it.
+        # Flet will:
+        #   a. Pop e.view from page.views.
+        #   b. Update page.route to the route of the new page.views[-1] (if any).
+        #   c. Trigger on_route_change with the new page.route.
+        # Our on_route_change will then build the correct view.
+        print(f"Standard pop for '{current_view_route_being_popped}'. Letting Flet's default mechanism proceed.")
+        print(f"--- VIEW POP END (default Flet handling) ---")
+        # NO page.go() here
 
     page.on_route_change = route_change
     page.on_view_pop = view_pop
