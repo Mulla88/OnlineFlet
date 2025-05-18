@@ -484,18 +484,30 @@ def main(page: ft.Page):
          if page.client_storage: page.update()
 
     def view_pop(e: ft.ViewPopEvent):
-         page.views.pop()
-         top_view = page.views[-1] if page.views else None
+        # Check if there's more than one view to pop.
+        # If only one view (the root/home view) is present, popping it would lead to an empty stack,
+        # which is usually handled by navigating home directly.
+        
+        # Handle online game cleanup first if applicable
+        if e.view and e.view.route and e.view.route.startswith("/game/") and "/online/" in e.view.route:
+            print(f"Popping view from online game: {e.view.route}. Triggering go_home for cleanup.")
+            # go_home() will navigate to "/", which will also clear and rebuild views.
+            # We don't need to pop here manually as go_home will handle the navigation and view stack.
+            go_home() 
+            return # Exit after go_home because it handles navigation
 
-         if e.view and e.view.route and e.view.route.startswith("/game/") and "/online/" in e.view.route:
-             print(f"Popping view from online game: {e.view.route}. Triggering go_home for cleanup.")
-             go_home() 
-             return 
-
-         if not top_view:
-             page.go("/") 
-         else:
-             page.go(top_view.route)
+        # If not an online game view being popped, or if go_home wasn't called
+        if len(page.views) > 1: # Only pop if there's a view to go back to
+            page.views.pop()
+            top_view = page.views[-1] # This is now safe
+            page.go(top_view.route)
+        else:
+            # If only one view is left (or somehow it's empty, though less likely now),
+            # or if the user is trying to "back" from the very first view,
+            # just go to the home page.
+            # This also handles the case where go_home() might have already cleared views.
+            print(f"View pop attempted on a shallow view stack (count: {len(page.views)}). Navigating to home.")
+            page.go("/")
 
     page.on_route_change = route_change
     page.on_view_pop = view_pop
