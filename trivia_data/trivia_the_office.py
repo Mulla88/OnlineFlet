@@ -1543,7 +1543,256 @@ trivia_questions = [
         "question": "Who has a panic room hidden inside a filing cabinet?",
         "options": ["Dwight", "Creed", "Michael", "Angela"],
         "answer": "Dwight"
-    }
-
+    },
+    {
+        "question": "What is the name of the disease Michael fabricates to get sympathy during 'Health Care'?",
+        "options": ["Spontaneous Dantuflammation", "Inverted Penis", "Leprosy", "Anal Fissures"],
+        "answer": "Spontaneous Dantuflammation"
+    },
+    {
+        "question": "What specific type of computer does Michael smash during his ' स्थानीय विज्ञापन' (Local Ad) filming?",
+        "options": ["Dell Laptop", "Apple iMac", "HP Desktop", "A generic monitor"],
+        "answer": "A generic monitor"
+    },
+    {
+        "question": "What is the name of the rival office supply salesman who briefly dates Pam and is considered very handsome?",
+        "options": ["Danny Cordray", "Mark Porter", "Charles Miner", "Tony Gardner"],
+        "answer": "Danny Cordray"
+    },
+    {
+        "question": "What is the name of the company that makes the printers Sabre sells, which are known to catch fire?",
+        "options": ["Arrowhead", "Pyramid", "Apex", "Summit"],
+        "answer": "Arrowhead"
+    },
+    {
+        "question": "Which character is revealed to have a sister who is a professional WNBA player?",
+        "options": ["Darryl", "Stanley", "Oscar", "Kevin"],
+        "answer": "Darryl"
+    },
+    {
+        "question": "What is the name of the warehouse worker who is deaf and communicates via sign language and a text-to-speech device?",
+        "options": ["Hidetoshi", "Calvin", "Glenn", "Nate"],
+        "answer": "Hidetoshi"
+    },
+    {
+        "question": "What is the name of the employee from the Utica branch who Michael tries to poach, leading to a prank war?",
+        "options": ["Karen Filippelli", "Hannah Smoterich-Barr", "Rolando", "Ben Nugent"],
+        "answer": "Rolando"
+    },
+    {
+        "question": "What specific item does Michael buy at a gas station convenience store that he believes is a 'fun run' essential?",
+        "options": ["A giant pretzel", "A pack of cigarettes", "A family-size bag of fettuccine alfredo", "A dozen energy drinks"],
+        "answer": "A family-size bag of fettuccine alfredo"
+    },
+    {
+        "question": "Which character is revealed to have a passion for competitive eating, particularly hot dogs?",
+        "options": ["Kevin", "Andy", "Creed", "Phyllis"],
+        "answer": "Andy"
+    },
+    {
+        "question": "What is the name of the bar that Robert California buys on a whim and then tries to close down?",
+        "options": ["Poor Richard's", "The Lizard Lounge", "The Office Bar", "The Albion"],
+        "answer": "The Lizard Lounge"
+    },
+    {
+        "question": "Which employee is revealed to have previously worked at a Quiznos?",
+        "options": ["Erin", "Kelly", "Ryan", "Meredith"],
+        "answer": "Erin"
+    },
+    {
+        "question": "What is the name of the children's television show host Michael Scott idolizes and tries to emulate?",
+        "options": ["Mr. Rogers", "Captain Kangaroo", "Miss Lilly", "Professor Puppet"],
+        "answer": "Miss Lilly"
+    },
+    {
+        "question": "What specific medical condition does Pam fake to get out of a work task assigned by Dwight?",
+        "options": ["A migraine", "Food poisoning", "PMS", "A broken copier"],
+        "answer": "PMS"
+    },
+    {
+        "question": "Which character is revealed to have a secret love for justice and briefly becomes a vigilante in the office?",
+        "options": ["Dwight (as Recyclops)", "Michael (as Agent Scarn)", "Oscar (as the Rational Consumer)", "Kevin (as Cookie Monster)"],
+        "answer": "Oscar (as the Rational Consumer)"
+    },
+    {
+        "question": "What is the name of the company that Dunder Mifflin is trying to compete with when they create the 'Infinity' website?",
+        "options": ["Staples.com", "OfficeMax Online", "WUPHF.com", "Paper Universe"],
+        "answer": "Staples.com"
+    },
+    {
+        "question": "Which character is revealed to have a highly successful Etsy shop selling handmade crafts?",
+        "options": ["Phyllis", "Angela", "Pam", "Erin"],
+        "answer": "Phyllis"
+    },
+    {
+        "question": "What is the name of the Canadian client that Michael and Andy try to impress, leading to a disastrous business trip?",
+        "options": ["Winnipeg Consolidated", "Quebec Paper", "Osprey Paper", "Northern Lights Supplies"],
+        "answer": "Osprey Paper"
+    },
+    {
+        "question": "Which character is revealed to have a twin they were separated from at birth (a storyline in later seasons)?",
+        "options": ["Dwight", "Andy", "Oscar", "Kevin"],
+        "answer": "Oscar"
+    },
+    {
+        "question": "What is the name of the employee who is an aspiring author and writes a murder mystery novel set in the office?",
+        "options": ["Toby", "Pam", "Michael", "Oscar"],
+        "answer": "Toby"
+    },
+    {
+        "question": "What is the name of the exclusive club within Dunder Mifflin that only Michael and sometimes Dwight are part of?",
+        "options": ["The Diamond Club", "The Chairman's Circle", "The Five Families", "The President's Club"],
+        "answer": "The Five Families"
+    },
+    {
+        "question": "Which character is revealed to have a sophisticated palate and is a wine connoisseur?",
+        "options": ["Stanley", "Robert California", "Oscar", "Jan"],
+        "answer": "Robert California"
+    },
+    {
+        "question": "What is the name of the new, younger employee who joins the office in Season 9 and is often called 'New Jim'?",
+        "options": ["Clark Green", "Pete Miller", "Nate Nickerson", "Trevor Schrute"],
+        "answer": "Pete Miller"
+    },
+    {
+        "question": "What is the name of the warehouse worker who Pam has a brief, awkward crush on after her separation from Roy?",
+        "options": ["Lonny", "Glenn", "Matt", "Hide"],
+        "answer": "Matt"
+    },
+    {
+        "question": "Which character is revealed to have a grandmother who makes amazing pies, leading to a pie-baking contest?",
+        "options": ["Kevin", "Stanley", "Phyllis", "Meredith"],
+        "answer": "Stanley"
+    },
+    {
+        "question": "What is the name of the company that Dwight Schrute briefly works for after being fired from Dunder Mifflin?",
+        "options": ["Staples", "Office Depot", "Prince Family Paper", "Hammermill"],
+        "answer": "Staples"
+    },
+    {
+        "question": "Which character is known for their elaborate and often unsuccessful attempts to get a date, including a 'Date Mike' persona?",
+        "options": ["Andy", "Kevin", "Michael", "Dwight"],
+        "answer": "Michael"
+    },
+    {
+        "question": "What is the name of the ice sculpture that is destroyed at Phyllis's wedding shower?",
+        "options": ["A swan", "A heart", "A Vance Refrigeration logo", "A pair of doves"],
+        "answer": "A swan"
+    },
+    {
+        "question": "Which character is revealed to have a son who works in the military?",
+        "options": ["Stanley", "Meredith", "Creed", "Phyllis"],
+        "answer": "Meredith"
+    },
+    {
+        "question": "What is the name of the employee who is known for their love of pop culture and frequently makes references to movies and TV shows?",
+        "options": ["Kelly", "Erin", "Ryan", "Andy"],
+        "answer": "Kelly"
+    },
+    {
+        "question": "What is the name of the character who is a successful salesman from the Syracuse branch, known for his good looks?",
+        "options": ["Josh Porter", "Danny Cordray", "Charles Miner", "Martin Nash"],
+        "answer": "Danny Cordray"
+    },
+    {
+        "question": "What specific martial art does Dwight claim to be a black belt in, though his skills are questionable?",
+        "options": ["Judo", "Karate (Goju-Ryu)", "Taekwondo", "Aikido"],
+        "answer": "Karate (Goju-Ryu)"
+    },
+    {
+        "question": "Which character is revealed to have a gambling problem and owes Kevin money?",
+        "options": ["Oscar", "Andy", "Stanley", "Darryl"],
+        "answer": "Oscar"
+    },
+    {
+        "question": "What is the name of the company that Dunder Mifflin is often competing against for clients?",
+        "options": ["Staples", "Office Depot", "Prince Family Paper", "Vance Refrigeration (for non-paper needs)"],
+        "answer": "Prince Family Paper"
+    },
+    {
+        "question": "Which character is known for their obsession with safety procedures and often overreacts to minor incidents?",
+        "options": ["Angela", "Oscar", "Dwight", "Toby"],
+        "answer": "Dwight"
+    },
+    {
+        "question": "What is the name of the employee who is frequently the target of Michael's inappropriate jokes and impressions, especially during Diversity Day?",
+        "options": ["Oscar", "Stanley", "Kelly", "Darryl"],
+        "answer": "Kelly"
+    },
+    {
+        "question": "What is the name of the character who is the office's IT support technician and is often exasperated by their requests?",
+        "options": ["Sadiq", "Nick", "Garth (Shadow or Garth)", "Benjamin"],
+        "answer": "Garth (Shadow or Garth)"
+    },
+    {
+        "question": "Which character is known for their love of crossword puzzles and often does them during meetings?",
+        "options": ["Phyllis", "Stanley", "Oscar", "Creed"],
+        "answer": "Stanley"
+    },
+    {
+        "question": "What is the name of the company retreat where Michael leads a disastrous 'Survivor Man' exercise?",
+        "options": ["Lake Scranton", "Pocono Wilderness Retreat", "Schrute Farms", "Dunder Mifflin Corporate Woods"],
+        "answer": "Pocono Wilderness Retreat"
+    },
+    {
+        "question": "Which character is revealed to have a past as a member of a rock band called 'The Grass Roots' (in their fictional backstory)?",
+        "options": ["Kevin", "Darryl", "Creed", "Andy"],
+        "answer": "Creed"
+    },
+    {
+        "question": "What is the name of the employee who wins a mini-refrigerator in an office raffle and becomes very protective of it?",
+        "options": ["Phyllis", "Stanley", "Kevin", "Oscar"],
+        "answer": "Phyllis"
+    },
+    {
+        "question": "Which character is known for their elaborate and often inappropriate Halloween costumes?",
+        "options": ["Michael", "Dwight", "Creed", "Kevin"],
+        "answer": "Michael"
+    },
+    {
+        "question": "What is the name of the company that owns the building where Dunder Mifflin Scranton is located?",
+        "options": ["Scranton Properties", "Keystone Realty", "Penn REIT", "Lackawanna County Business Development"],
+        "answer": "Penn REIT"
+    },
+    {
+        "question": "Which character is revealed to have a secret identity as a successful romance novelist under a pseudonym?",
+        "options": ["Phyllis", "Angela", "Meredith", "Pam"],
+        "answer": "Phyllis"
+    },
+    {
+        "question": "What is the name of the employee who is known for their love of gossip and often spreads rumors?",
+        "options": ["Kelly", "Meredith", "Phyllis", "Oscar"],
+        "answer": "Kelly"
+    },
+    {
+        "question": "Which character is revealed to be a skilled basketball player and briefly considers playing professionally in Europe?",
+        "options": ["Jim", "Darryl", "Roy", "Stanley"],
+        "answer": "Roy"
+    },
+    {
+        "question": "What is the name of the company that Michael Scott tries to start in his condo after quitting Dunder Mifflin the first time (before Michael Scott Paper Company)?",
+        "options": ["Scott's Tots Foundation (as a business)", "Paper Greatness", "Michael's Cereal Shack", "He doesn't start another before MSPC"],
+        "answer": "He doesn't start another before MSPC"
+    },
+    {
+        "question": "Which character is known for their very specific and often unusual food preferences, such as only eating plain M&Ms?",
+        "options": ["Angela", "Kevin", "Creed", "Meredith"],
+        "answer": "Angela"
+    },
+    {
+        "question": "What is the name of the character who is the CEO of Dunder Mifflin before Sabre acquires them and is generally well-liked by Michael?",
+        "options": ["Jan Levinson", "David Wallace", "Alan Brand", "Ed Truck"],
+        "answer": "David Wallace"
+    },
+    {
+        "question": "Which character is known for their frequent, often rambling, talking head interviews where they overshare personal details?",
+        "options": ["Michael", "Kevin", "Kelly", "Meredith"],
+        "answer": "Michael"
+    },
+    {
+        "question": "What is the name of the character who is the head of the Party Planning Committee and is often in conflict with Angela?",
+        "options": ["Pam", "Erin", "Phyllis", "Karen"],
+        "answer": "Phyllis"
+    },
 ]
 

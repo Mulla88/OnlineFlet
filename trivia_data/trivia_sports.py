@@ -1349,4 +1349,360 @@ trivia_questions = [
         "options": ["Khabib Nurmagomedov", "Jon Jones", "Georges St-Pierre", "BJ Penn"],
         "answer": "Khabib Nurmagomedov"
     },
+    {
+        "question": "In basketball, what is the term for illegally moving with the ball without dribbling?",
+        "options": ["Carrying", "Palming", "Traveling", "Double dribble"],
+        "answer": "Traveling"
+    },
+    {
+        "question": "Which NFL team is the only publicly owned, non-profit, community-owned team?",
+        "options": ["New England Patriots", "Dallas Cowboys", "Green Bay Packers", "Pittsburgh Steelers"],
+        "answer": "Green Bay Packers"
+    },
+    {
+        "question": "In which sport might a competitor use a 'foil', 'épée', or 'sabre'?",
+        "options": ["Archery", "Fencing", "Javelin", "Rowing"],
+        "answer": "Fencing"
+    },
+    {
+        "question": "Which country won the UEFA European Championship (Euro) in 2004 in a major upset?",
+        "options": ["Portugal", "Greece", "Netherlands", "Czech Republic"],
+        "answer": "Greece"
+    },
+    {
+        "question": "What is the term for a score of one under par on a hole in golf?",
+        "options": ["Eagle", "Bogey", "Birdie", "Albatross"],
+        "answer": "Birdie"
+    },
+    {
+        "question": "Which of these is NOT a swimming stroke competed at the Olympics?",
+        "options": ["Freestyle", "Breaststroke", "Dog paddle", "Butterfly"],
+        "answer": "Dog paddle"
+    },
+    {
+        "question": "How many points is a 'try' worth in Rugby Union before the conversion kick?",
+        "options": ["3", "4", "5", "7"],
+        "answer": "5"
+    },
+    {
+        "question": "Which female tennis player completed the 'Golden Slam' (all four Grand Slams and Olympic gold) in 1988?",
+        "options": ["Serena Williams", "Martina Navratilova", "Steffi Graf", "Margaret Court"],
+        "answer": "Steffi Graf"
+    },
+    {
+        "question": "In boxing, what is the term for a punch thrown with the lead hand that is straight and quick?",
+        "options": ["Hook", "Uppercut", "Cross", "Jab"],
+        "answer": "Jab"
+    },
+    {
+        "question": "Which country is credited with inventing the sport of badminton?",
+        "options": ["China", "India", "England", "Malaysia"],
+        "answer": "India"
+    },
+    {
+        "question": "In baseball, how many strikes does a batter get before striking out?",
+        "options": ["2", "3", "4", "5"],
+        "answer": "3"
+    },
+    {
+        "question": "Which city hosted the 1992 Summer Olympics, famous for its 'Dream Team' in basketball?",
+        "options": ["Atlanta", "Barcelona", "Seoul", "Los Angeles"],
+        "answer": "Barcelona"
+    },
+    {
+        "question": "What is the name of the annual sled dog race held in Alaska, often called 'The Last Great Race on Earth'?",
+        "options": ["Yukon Quest", "Iditarod Trail Sled Dog Race", "Finnmarksløpet", "Beargrease Sled Dog Marathon"],
+        "answer": "Iditarod Trail Sled Dog Race"
+    },
+    {
+        "question": "In which sport is the 'America's Cup' the most prestigious trophy?",
+        "options": ["Rowing", "Sailing", "Canoeing", "Surfing"],
+        "answer": "Sailing"
+    },
+    {
+        "question": "Which UFC fighter holds the record for the fastest knockout in UFC history (5 seconds)?",
+        "options": ["Conor McGregor", "Jorge Masvidal", "Duane Ludwig", "Chan Sung Jung"],
+        "answer": "Jorge Masvidal"
+    },
+    {
+        "question": "What is the traditional Japanese martial art that focuses on throws and joint locks?",
+        "options": ["Karate", "Aikido", "Kendo", "Judo"],
+        "answer": "Judo"
+    },
+    {
+        "question": "Which Formula 1 constructor has won the most consecutive Constructors' Championships (9 from 2014-2022)?",
+        "options": ["Ferrari", "McLaren", "Williams", "Mercedes"],
+        "answer": "Mercedes"
+    },
+    {
+        "question": "In cricket, what is the term for a batsman being dismissed without scoring any runs?",
+        "options": ["Zeroed", "Blank", "Duck", "Outright"],
+        "answer": "Duck"
+    },
+    {
+        "question": "Which country won the FIFA Women's World Cup in 2023?",
+        "options": ["USA", "England", "Spain", "Australia"],
+        "answer": "Spain"
+    },
+    {
+        "question": "What is the name of the object that players hit in the sport of curling?",
+        "options": ["Disc", "Stone", "Puck", "Bowl"],
+        "answer": "Stone"
+    },
+    {
+        "question": "Which NBA player was nicknamed 'The Stilt'?",
+        "options": ["Bill Russell", "Kareem Abdul-Jabbar", "Wilt Chamberlain", "Shaquille O'Neal"],
+        "answer": "Wilt Chamberlain"
+    },
+    {
+        "question": "Which NFL quarterback holds the record for most career regular season wins?",
+        "options": ["Peyton Manning", "Brett Favre", "Tom Brady", "Drew Brees"],
+        "answer": "Tom Brady"
+    },
+    {
+        "question": "In what sport would you find a 'peloton'?",
+        "options": ["Rowing", "Marathon running", "Cycling", "Triathlon"],
+        "answer": "Cycling"
+    },
+    {
+        "question": "Which country has won the most FIBA Women's Basketball World Cups?",
+        "options": ["USA", "Australia", "Russia", "Brazil"],
+        "answer": "USA"
+    },
+    {
+        "question": "What is the term for when a bowler knocks down all ten pins with their first ball in a frame?",
+        "options": ["Spare", "Turkey", "Strike", "Perfecto"],
+        "answer": "Strike"
+    },
+    {
+        "question": "Who was the first African-American to play in Major League Baseball in the modern era?",
+        "options": ["Willie Mays", "Hank Aaron", "Jackie Robinson", "Satchel Paige"],
+        "answer": "Jackie Robinson"
+    },
+    {
+        "question": "Which city is bidding to host the 2036 Summer Olympics from Saudi Arabia?",
+        "options": ["Jeddah", "Neom", "Riyadh", "Dammam"],
+        "answer": "Riyadh"
+    },
+    {
+        "question": "In chess, what is the only piece that can jump over other pieces?",
+        "options": ["Bishop", "Rook", "Queen", "Knight"],
+        "answer": "Knight"
+    },
+    {
+        "question": "Which famous horse race is known as 'The Run for the Roses'?",
+        "options": ["Belmont Stakes", "Preakness Stakes", "Kentucky Derby", "Epsom Derby"],
+        "answer": "Kentucky Derby"
+    },
+    {
+        "question": "What is the name of the highest mountain in the world, often a challenge for mountaineers?",
+        "options": ["K2", "Mount Everest", "Kangchenjunga", "Lhotse"],
+        "answer": "Mount Everest"
+    },
+    {
+        "question": "Which Saudi Arabian city is set to host the 2027 AFC Asian Cup?",
+        "options": ["Jeddah", "Riyadh", "Dammam", "Al Khobar"],
+        "answer": "Riyadh"
+    },
+    {
+        "question": "How many rings are on the Olympic flag?",
+        "options": ["4", "5", "6", "7"],
+        "answer": "5"
+    },
+    {
+        "question": "In which sport is a 'scrum' a method of restarting play?",
+        "options": ["American Football", "Australian Rules Football", "Rugby", "Ice Hockey"],
+        "answer": "Rugby"
+    },
+    {
+        "question": "Who was the first person to run a mile in under four minutes?",
+        "options": ["Paavo Nurmi", "Emil Zátopek", "Roger Bannister", "Hicham El Guerrouj"],
+        "answer": "Roger Bannister"
+    },
+    {
+        "question": "Which NBA team won three consecutive championships from 2000 to 2002, led by Shaquille O'Neal and Kobe Bryant?",
+        "options": ["Chicago Bulls", "San Antonio Spurs", "Los Angeles Lakers", "Houston Rockets"],
+        "answer": "Los Angeles Lakers"
+    },
+    {
+        "question": "What is the term for a score of two strokes under par on a single golf hole?",
+        "options": ["Birdie", "Eagle", "Albatross", "Bogey"],
+        "answer": "Eagle"
+    },
+    {
+        "question": "Which country won the 2023 Africa Cup of Nations (held in 2024)?",
+        "options": ["Nigeria", "Senegal", "Egypt", "Ivory Coast"],
+        "answer": "Ivory Coast"
+    },
+    {
+        "question": "What is the name of the famous cycling race held annually in Italy, considered one of the three Grand Tours?",
+        "options": ["Vuelta a España", "Tour de Suisse", "Giro d'Italia", "Critérium du Dauphiné"],
+        "answer": "Giro d'Italia"
+    },
+    {
+        "question": "Which team did Michael Jordan play for after his first retirement from the Chicago Bulls?",
+        "options": ["Los Angeles Lakers", "New York Knicks", "Washington Wizards", "Philadelphia 76ers"],
+        "answer": "Washington Wizards"
+    },
+    {
+        "question": "In billiards, what color is the 8-ball?",
+        "options": ["Red", "Yellow", "Black", "Blue"],
+        "answer": "Black"
+    },
+    {
+        "question": "Which martial art, originating in Korea, is known for its high, spinning kicks?",
+        "options": ["Judo", "Karate", "Kung Fu", "Taekwondo"],
+        "answer": "Taekwondo"
+    },
+    {
+        "question": "Who holds the record for the most home runs in a single MLB season?",
+        "options": ["Babe Ruth", "Mark McGwire", "Barry Bonds", "Sammy Sosa"],
+        "answer": "Barry Bonds"
+    },
+    {
+        "question": "Which country is scheduled to host the 2026 FIFA World Cup along with the USA and Mexico?",
+        "options": ["Brazil", "Canada", "Argentina", "Costa Rica"],
+        "answer": "Canada"
+    },
+    {
+        "question": "What is the name of the annual professional surfing world championship tour?",
+        "options": ["Big Wave Tour", "World Surf League (WSL)", "Pro Surfers Circuit", "Ocean Masters"],
+        "answer": "World Surf League (WSL)"
+    },
+    {
+        "question": "In volleyball, what is the term for a player saving the ball from hitting the ground with a dive or slide?",
+        "options": ["Spike", "Block", "Set", "Dig"],
+        "answer": "Dig"
+    },
+    {
+        "question": "Which NFL team is famous for its 'Lambeau Leap' celebration?",
+        "options": ["Chicago Bears", "Minnesota Vikings", "Detroit Lions", "Green Bay Packers"],
+        "answer": "Green Bay Packers"
+    },
+    {
+        "question": "What is the only city to have hosted both the Summer and Winter Olympic Games?",
+        "options": ["London", "Paris", "Beijing", "Tokyo"],
+        "answer": "Beijing"
+    },
+    {
+        "question": "Which jockey holds the record for the most wins in the Kentucky Derby?",
+        "options": ["Eddie Arcaro", "Bill Shoemaker", "Mike Smith", "John Velazquez"],
+        "answer": "Eddie Arcaro"
+    },
+    {
+        "question": "Which country won the Copa América in 2021, with Lionel Messi leading the team?",
+        "options": ["Brazil", "Uruguay", "Chile", "Argentina"],
+        "answer": "Argentina"
+    },
+    {
+        "question": "What is the name for the move in chess where the king and a rook move simultaneously?",
+        "options": ["En passant", "Promotion", "Checkmate", "Castling"],
+        "answer": "Castling"
+    },
+    {
+        "question": "Which African footballer won the Ballon d'Or in 1995?",
+        "options": ["Didier Drogba", "Samuel Eto'o", "George Weah", "Yaya Touré"],
+        "answer": "George Weah"
+    },
+    {
+        "question": "In archery, what is the color of the innermost ring on a standard target, worth 10 points?",
+        "options": ["Red", "Blue", "Gold", "Black"],
+        "answer": "Gold"
+    },
+    {
+        "question": "Which NHL team has won the most Stanley Cups?",
+        "options": ["Boston Bruins", "Toronto Maple Leafs", "Detroit Red Wings", "Montreal Canadiens"],
+        "answer": "Montreal Canadiens"
+    },
+    {
+        "question": "What is the term for a perfect game in baseball (no batter reaches first base)?",
+        "options": ["No-hitter", "Shutout", "Perfect Game", "Grand Slam"],
+        "answer": "Perfect Game"
+    },
+    {
+        "question": "Which NBA player was known by the nickname 'The Dream'?",
+        "options": ["Kareem Abdul-Jabbar", "Shaquille O'Neal", "Hakeem Olajuwon", "Patrick Ewing"],
+        "answer": "Hakeem Olajuwon"
+    },
+    {
+        "question": "Which city in Saudi Arabia is planned to host the Asian Winter Games in 2029?",
+        "options": ["Riyadh", "Jeddah", "Abha", "Trojena (Neom)"],
+        "answer": "Trojena (Neom)"
+    },
+    {
+        "question": "In athletics, which event combines running, jumping, and throwing disciplines?",
+        "options": ["Marathon", "Triathlon", "Decathlon", "Pentathlon"],
+        "answer": "Decathlon"
+    },
+    {
+        "question": "Who was the first NBA player to win the MVP award four times?",
+        "options": ["Michael Jordan", "Bill Russell", "Kareem Abdul-Jabbar", "LeBron James"],
+        "answer": "Bill Russell"
+    },
+    {
+        "question": "Which Formula 1 driver has the most World Championship titles (tied with Michael Schumacher)?",
+        "options": ["Sebastian Vettel", "Ayrton Senna", "Lewis Hamilton", "Alain Prost"],
+        "answer": "Lewis Hamilton"
+    },
+    {
+        "question": "What is the name of the annual tennis tournament considered the unofficial 'fifth Grand Slam'?",
+        "options": ["Miami Open", "Monte-Carlo Masters", "Indian Wells Masters", "ATP Finals"],
+        "answer": "Indian Wells Masters"
+    },
+    {
+        "question": "In which sport is 'love-fifteen' a score?",
+        "options": ["Badminton", "Squash", "Table Tennis", "Tennis"],
+        "answer": "Tennis"
+    },
+    {
+        "question": "Which nation has won the most gold medals in Olympic men's field hockey?",
+        "options": ["Australia", "Netherlands", "Germany", "India"],
+        "answer": "India"
+    },
+    {
+        "question": "What is the maximum number of clubs a golfer is allowed to carry in their bag during a round?",
+        "options": ["10", "12", "14", "16"],
+        "answer": "14"
+    },
+    {
+        "question": "Which country is Pelé, the legendary footballer, from?",
+        "options": ["Argentina", "Portugal", "Brazil", "Spain"],
+        "answer": "Brazil"
+    },
+    {
+        "question": "In the NFL, what is the term for an offensive player tackling a defensive player who has intercepted the ball?",
+        "options": ["Block", "Sack", "Fumble recovery", "Tackle"],
+        "answer": "Tackle"
+    },
+    {
+        "question": "Which English football club plays its home games at Anfield?",
+        "options": ["Manchester United", "Chelsea", "Arsenal", "Liverpool"],
+        "answer": "Liverpool"
+    },
+    {
+        "question": "What is the name of the trophy awarded to the winner of the NHL playoffs?",
+        "options": ["Commissioner's Trophy", "Larry O'Brien Trophy", "Vezina Trophy", "Stanley Cup"],
+        "answer": "Stanley Cup"
+    },
+    {
+        "question": "How many lanes are typically in an Olympic-sized swimming pool for individual events?",
+        "options": ["6", "8", "10", "12"],
+        "answer": "8"
+    },
+    {
+        "question": "Which boxer was known as 'The Brown Bomber'?",
+        "options": ["Rocky Marciano", "Joe Louis", "Jack Dempsey", "Sugar Ray Robinson"],
+        "answer": "Joe Louis"
+    },
+    {
+        "question": "Which city will host the 2024 Summer Olympics?",
+        "options": ["Los Angeles", "Rome", "Paris", "Brisbane"],
+        "answer": "Paris"
+    },
+    {
+        "question": "In skiing, what is the term for a race that involves skiing downhill between sets of poles or gates?",
+        "options": ["Cross-country", "Slalom", "Ski jumping", "Freestyle"],
+        "answer": "Slalom"
+    },
+
 ]

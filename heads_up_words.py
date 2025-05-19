@@ -1109,6 +1109,106 @@ HEADS_UP_WORDS = [
     "بطانية خفيفة",
     "نظارة نوم",
     "سماعة عزل",
-    "شاحن متنقل صغير"
+    "شاحن متنقل صغير",
+    "أفوكادو",        # Avocado
+    "شمام",           # Melon/Cantaloupe
+    "سبانخ",          # Spinach
+    "بقدونس",         # Parsley
+    "كزبرة",          # Coriander
+    "هيل",            # Cardamom
+    "جوز الهند",      # Coconut
+    "كاجو",           # Cashew
+    "زبيب",           # Raisins
+    "يقطين",          # Pumpkin
+    "شمندر",          # Beetroot
+    "بامية",          # Okra
+    "جرجير",          # Arugula/Rocket
+    "سوشي",           # Sushi
+    "تاكو",           # Taco
+    "كرواسون",        # Croissant
+    "عجة",            # Omelette
+    "مربى",           # Jam
+    "خردل",           # Mustard
+    "زيت زيتون",      # Olive oil
+    "أسد",            # Lion
+    "فهد",            # Cheetah/Leopard
+    "غزال",           # Deer/Gazelle
+    "قنفذ",           # Hedgehog
+    "خفاش",           # Bat
+    "حوت",            # Whale
+    "دولفين",         # Dolphin
+    "حبار",           # Squid
+    "سلطعون",         # Crab
+    "جراد البحر",     # Lobster
+    "حصان البحر",     # Seahorse
+    "قنديل البحر",    # Jellyfish
+    "فقمة",           # Seal
+    "ببغاء",          # Parrot
+    "طاووس",          # Peacock
+    "حمامة",          # Pigeon/Dove
+    "غراب",           # Crow/Raven
+    "نقار الخشب",     # Woodpecker
+    "طائر الطنان",    # Hummingbird
+    "لقلق",           # Stork
+    "سحلية",          # Lizard
+    "ثعبان",          # Snake
+    "برص",            # Gecko
+    "حرباء",          # Chameleon
+    "علجوم",          # Toad
+    "عنكبوت",         # Spider
+    "عقرب",           # Scorpion
+    "صرصور",          # Cockroach
+    "بعوضة",          # Mosquito
+    "دبور",           # Wasp
+    "خنفساء",         # Beetle
+    "يرقة",           # Caterpillar
+    "قمل",            # Lice
+    "برغوث",          # Flea
+    "فرس النبي",      # Praying Mantis
+    "يعسوب",          # Dragonfly
+    "نجار",           # Carpenter
+    "سباك",           # Plumber
+    "كهربائي",        # Electrician
+    "ميكانيكي",       # Mechanic
+    "دهان",           # Painter (house)
+    "خياط",           # Tailor
+    "حلاق",           # Barber
+    "بائع زهور",      # Florist
+    "أمين مكتبة",     # Librarian
+    "عالم آثار",      # Archaeologist
+    "عالم فلك",       # Astronomer
+    "كيميائي",        # Chemist
+    "فيزيائي",        # Physicist
+    "صحفي",           # Journalist
+    "ممثل",           # Actor
+    "مصمم أزياء",     # Fashion designer
+    "مهندس معماري",   # Architect
+    "مبرمج",          # Programmer
+    "محاسب",          # Accountant
+    "مرشد سياحي",     # Tour guide
+    "طبيب بيطري",     # Veterinarian
+    "مزارع",          # Farmer
+    "منقذ",           # Lifeguard
+    "نادل",           # Waiter
+    "قاضي",           # Judge
+    "محقق",           # Detective
+    "جاسوس",          # Spy
+    "فارس",           # Knight
+    "ساحرة",          # Witch
+    "بطل",            # Hero
+    "شرير",           # Villain
+    "مستكشف",         # Explorer
+    "نحات",           # Sculptor
+    "صحراء",          # Desert
+    "واحة",           # Oasis
+    "بركان",          # Volcano
+    "شلال",           # Waterfall
+    "بحيرة",          # Lake
+    "محيط",           # Ocean
+    "منارة",          # Lighthouse
+    "جسر",            # Bridge
+    "نفق",            # Tunnel
+    "حقيبة ظهر",      # Backpack
+    "طائرة ورقية"     # Kite
 
 ]
