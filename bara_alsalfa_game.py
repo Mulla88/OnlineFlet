@@ -835,7 +835,7 @@ def bara_alsalfa_online_logic(page: ft.Page, go_home_fn, send_action_fn, room_co
                 ft.Container(
                     content=player_list_display,
                     padding=10,
-                    border=ft.border.all(1, ft.colors.with_opacity(0.5, ft.colors.ON_SURFACE_VARIANT)),
+                    border=ft.border.all(1, ft.Colors.with_opacity(0.5, ft.Colors.ON_SURFACE_VARIANT)),
                     border_radius=8,
                     col={"xs": 12, "md": 4, "lg":3}, # Player list takes less space on wider screens
                     margin=ft.margin.only(bottom=10 if page.width and page.width < 768 else 0) # Bottom margin only on small screens
