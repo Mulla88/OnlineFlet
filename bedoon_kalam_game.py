@@ -279,7 +279,7 @@ def bedoon_kalam_offline_logic(page: ft.Page, go_home_fn):
                     )
             summary_container = ft.Container( # Container for word list
                 content=word_list_display_column,
-                border=ft.border.all(1, ft.colors.BLACK26),
+                border=ft.border.all(1, ft.Colors.BLACK26),
                 border_radius=5,
                 padding=10,
                 width=page.width * 0.9 if page.width else 320,
