@@ -9,7 +9,7 @@ def trivia_battle_offline_logic(page: ft.Page, go_home_fn):
     offline_state = {}
 
     trivia_categories_offline_map = {
-        "The Office (مكتبي)": "trivia_data.trivia_the_office",
+        "The Office": "trivia_data.trivia_the_office",
         "رياضة": "trivia_data.trivia_sports",
         "جغرافيا": "trivia_data.trivia_geography",
         "ثقافة عامة": "trivia_data.trivia_general_knowledge",
@@ -480,7 +480,7 @@ def trivia_battle_online_logic(page: ft.Page, go_home_fn, send_action_fn, room_c
             action_area_online_trivia.controls.append(ft.Text(f"في انتظار انضمام اللاعبين ({min_players_online}-{gs.get('max_players_for_game', 6)}).", text_align=ft.TextAlign.CENTER, size=16)) # Adjusted
             if is_host:
                 online_trivia_cats_client_map = {
-                    "The Office (مكتبي)": "trivia_data.trivia_the_office",
+                    "The Office": "trivia_data.trivia_the_office",
                     "رياضة": "trivia_data.trivia_sports",
                     "جغرافيا": "trivia_data.trivia_geography",
                     "ثقافة عامة": "trivia_data.trivia_general_knowledge",
