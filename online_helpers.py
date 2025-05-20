@@ -29,7 +29,7 @@ def start_server_timer(page_ref, room_code, duration_seconds, game_rooms_ref, ti
             should_send_update = (
                 i == duration_seconds or  # Initial send
                 i % 4 == 0 or             # Every 4 seconds
-                i <= 10                   # Every second for the last 10 seconds
+                i <= 4                   # Every second for the last 4 seconds
             )
 
             if should_send_update:
