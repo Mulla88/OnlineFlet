@@ -212,8 +212,13 @@ def trivia_battle_offline_logic(page: ft.Page, go_home_fn):
 
             feedback_icon = "✅" if s.get("last_q_correct_bool") else "❌"
             feedback_color = ft.Colors.GREEN_800 if s.get("last_q_correct_bool") else ft.Colors.RED_800
-            feedback_text_val = "إجابة صحيحة!" if s.get("last_q_correct_bool") else f"إجابة خاطئة! الجواب: {s.get('last_q_correct_answer_text','')}"
-
+            #feedback_text_val = "إجابة صحيحة!" if s.get("last_q_correct_bool") else f"إجابة خاطئة! الجواب: {s.get('last_q_correct_answer_text','')}"
+            # Replace the feedback_text_val line with:
+            correct_answer = s.get('last_q_correct_answer_text', '')
+            if s.get("last_q_correct_bool"):
+                feedback_text_val = f"إجابة صحيحة! الجواب: {correct_answer}"
+            else:
+                feedback_text_val = f"إجابة خاطئة! الجواب: {correct_answer}"
             offline_main_column.controls.append(ft.Text(f"{feedback_icon} {feedback_text_val}", color=feedback_color, size=20, weight=ft.FontWeight.BOLD, text_align=ft.TextAlign.CENTER)) # Adjusted
 
             offline_main_column.controls.append(ft.Divider(height=8)) # Adjusted
@@ -563,8 +568,13 @@ def trivia_battle_online_logic(page: ft.Page, go_home_fn, send_action_fn, room_c
 
             feedback_icon_online = "✅" if gs.get("last_answer_was_correct") else "❌"
             feedback_color_online = ft.Colors.GREEN_800 if gs.get("last_answer_was_correct") else ft.Colors.RED_800
-            feedback_text_val_online = "إجابة صحيحة!" if gs.get("last_answer_was_correct") else f"إجابة خاطئة! الجواب: {gs.get('correct_answer_text_for_last_q','')}"
-
+            #feedback_text_val_online = "إجابة صحيحة!" if gs.get("last_answer_was_correct") else f"إجابة خاطئة! الجواب: {gs.get('correct_answer_text_for_last_q','')}"
+            correct_answer_online = gs.get('correct_answer_text_for_last_q', '')
+            if gs.get("last_answer_was_correct"):
+                feedback_text_val_online = f"إجابة صحيحة! الجواب: {correct_answer_online}"
+            else:
+                feedback_text_val_online = f"إجابة خاطئة! الجواب: {correct_answer_online}"
+            
             action_area_online_trivia.controls.append(ft.Text(f"{feedback_icon_online} {feedback_text_val_online}", color=feedback_color_online, size=20, weight=ft.FontWeight.BOLD, text_align=ft.TextAlign.CENTER)) # Adjusted
 
             if is_host:
@@ -615,21 +625,39 @@ def trivia_battle_online_logic(page: ft.Page, go_home_fn, send_action_fn, room_c
             page.update()
 
 
+# trivia_battle_game.py
+
+# ... (other parts of trivia_battle_online_logic) ...
+
     def on_server_message_online_trivia(*args_received):
+        # current_player_name IS IN SCOPE HERE from the trivia_battle_online_logic parameters
         if not page.client_storage: return
         if not args_received or len(args_received) < 2: return
         msg_data = args_received[1]
         if not isinstance(msg_data, dict): return
+        
         msg_type = msg_data.get("type")
+
         if msg_type in ["GAME_STATE_UPDATE", "PLAYER_JOINED", "PLAYER_LEFT"]:
             room_state = msg_data.get("room_state")
             if room_state and isinstance(room_state, dict):
                 update_ui_from_server_state_online_trivia(room_state)
         elif msg_type == "ACTION_ERROR":
             error_msg = msg_data.get("message", "حدث خطأ في تريفيا باتل.")
-            if page.client_storage:
-                page.snack_bar = ft.SnackBar(ft.Text(error_msg, text_align=ft.TextAlign.CENTER), open=True)
-                page.update()
+            recipient = msg_data.get("recipient") # Get the recipient from the message
+
+            # Only show snackbar if the error is general (no recipient) 
+            # OR if this client is the intended recipient of the error message.
+            if not recipient or recipient == current_player_name:
+                if page.client_storage:
+                    page.snack_bar = ft.SnackBar(
+                        ft.Text(error_msg, text_align=ft.TextAlign.CENTER), 
+                        open=True
+                    )
+                    page.update()
+            # else:
+                # Optionally log if an error message was for someone else, for debugging
+                # print(f"Client: Received error for {recipient}, I am {current_player_name}. Ignoring SnackBar.")
 
     page.pubsub.subscribe_topic(f"room_{room_code}", on_server_message_online_trivia)
     initial_room_data = game_rooms_ref.get(room_code)
