@@ -332,48 +332,54 @@ def heads_up_game_offline_logic(page: ft.Page, go_home_fn):
 
         elif current_step == "round_summary":
             player_name_idx = _game_state_heads_up.get("current_player_index", 0)
-            # Guard against index out of bounds if something went wrong
             if player_name_idx >= len(_game_state_heads_up.get("players_names_list", [])):
-                set_current_page_step("final_results")  # Or handle error
+                set_current_page_step("final_results")
                 return
 
             player_name = _game_state_heads_up["players_names_list"][player_name_idx]
             round_score = _game_state_heads_up.get("current_round_score", 0.0)
             total_score = _game_state_heads_up.get("all_player_scores", {}).get(player_name, 0.0)
 
-            # Title
-            main_content_area.controls.append(
-                ft.Text("كلمات الجولة:", weight=ft.FontWeight.BOLD, text_align=ft.TextAlign.CENTER, size=16)
+            # Create responsive container for word log
+            word_log_responsive = ft.ResponsiveRow(
+                spacing=10,
+                run_spacing=8,
+                vertical_alignment=ft.CrossAxisAlignment.CENTER,
+                controls=[
+                    ft.Text("كلمات الجولة:", 
+                        col={"xs": 12},
+                        size=16,
+                        weight=ft.FontWeight.BOLD,
+                        text_align=ft.TextAlign.CENTER)
+                ]
             )
 
             round_words = _game_state_heads_up.get("current_round_word_log", [])
-            if not round_words:
-                word_log_display = ft.Container(
-                    content=ft.Text("لم يتم لعب كلمات.", italic=True, text_align=ft.TextAlign.CENTER, size=14),
-                    padding=8,
-                    alignment=ft.alignment.center
-                )
-            else:
-                word_controls = []
+            
+            if round_words:
                 for item in round_words:
                     status_symbol = "✅" if item["status"] == "correct" else ("⏭️" if item["status"] == "skipped" else "⏳")
                     color = ft.Colors.GREEN_800 if item["status"] == "correct" else (ft.Colors.RED_800 if item["status"] == "skipped" else ft.Colors.ORANGE_800)
-                    word_text = f"{status_symbol} {item['word']}"
-                    word_box = ft.Container(
-                        content=ft.Text(word_text, color=color, size=14, text_align=ft.TextAlign.CENTER),
-                        padding=ft.padding.symmetric(horizontal=6, vertical=4),
-                        border=ft.border.all(1, ft.Colors.BLACK12),
-                        border_radius=6,
-                        bgcolor=ft.Colors.WHITE,
-                        col={"xs": 6, "sm": 4, "md": 3},  # Responsive column sizing
+                    
+                    word_log_responsive.controls.append(
+                        ft.Container(
+                            content=ft.Text(
+                                f"{status_symbol} {item['word']}",
+                                color=color,
+                                size=14,
+                                text_align=ft.TextAlign.CENTER
+                            ),
+                            col={"xs": 6, "sm": 4, "md": 3},
+                            padding=ft.padding.symmetric(vertical=3),
+                        )
                     )
-                    word_controls.append(word_box)
-
-                word_log_display = ft.ResponsiveRow(
-                    controls=word_controls,
-                    alignment=ft.MainAxisAlignment.CENTER,
-                    run_spacing=8,
-                    spacing=8
+            else:
+                word_log_responsive.controls.append(
+                    ft.Text("لم يتم لعب كلمات.",
+                        col={"xs": 12},
+                        italic=True,
+                        text_align=ft.TextAlign.CENTER,
+                        size=14)
                 )
 
             main_content_area.controls.extend([
@@ -382,16 +388,19 @@ def heads_up_game_offline_logic(page: ft.Page, go_home_fn):
                 ft.Text(f"إجمالي نقاط {player_name}: {float(total_score):.1f}", size=18, text_align=ft.TextAlign.CENTER, color=ft.Colors.BLUE_GREY_700),
                 ft.Divider(height=10, thickness=1),
                 ft.Container(
-                    content=word_log_display,
+                    content=word_log_responsive,
                     border=ft.border.all(1, ft.Colors.BLACK26),
                     border_radius=8,
-                    padding=10,
+                    padding=ft.padding.all(10),
                     width=page.width * 0.9 if page.width else 300,
-                    alignment=ft.alignment.top_center,
-                    bgcolor=ft.Colors.GREY_50
+                    alignment=ft.alignment.center
                 ),
                 ft.Divider(height=10, thickness=1),
-                ft.ElevatedButton("▶ التالي", on_click=lambda e: proceed_from_summary(), width=280, height=55, style=ft.ButtonStyle(shape=ft.RoundedRectangleBorder(radius=10)))
+                ft.ElevatedButton("▶ التالي",
+                                on_click=lambda e: proceed_from_summary(),
+                                width=280,
+                                height=55,
+                                style=ft.ButtonStyle(shape=ft.RoundedRectangleBorder(radius=10)))
             ])
 
 
