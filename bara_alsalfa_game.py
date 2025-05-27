@@ -120,10 +120,11 @@ def bara_alsalfa_offline_logic(page: ft.Page, go_home_fn):
             cat_dropdown = ft.Dropdown(
                 label="اختر القائمة",
                 options=[ft.dropdown.Option(key=cat, text=cat) for cat in categories.keys()],
-                border_radius=8, height=50 # Adjusted
+                border_radius=8
             )
             cat_dropdown_container = ft.Container(
                 content=cat_dropdown,
+                height=50,
                 width=page.width * 0.85 if page.width else 280, # Adjusted
                 alignment=ft.alignment.center
             )
