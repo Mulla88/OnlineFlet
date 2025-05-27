@@ -525,10 +525,11 @@ def bara_alsalfa_online_logic(page: ft.Page, go_home_fn, send_action_fn, room_co
                     label="اختر القائمة",
                     options=cat_options,
                     value=gs.get("selected_category"),
-                    border_radius=8, height=50 # Adjusted
+                    border_radius=8
                 )
                 category_dropdown_container = ft.Container(
                     content=category_dropdown,
+                    height=50,
                     width=page.width * 0.8 if page.width else 260, # Adjusted
                     alignment=ft.alignment.center
                 )
