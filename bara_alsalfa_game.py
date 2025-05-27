@@ -784,7 +784,7 @@ def bara_alsalfa_online_logic(page: ft.Page, go_home_fn, send_action_fn, room_co
                     border_radius=8,
                     col={"xs": 12, "md": 4, "lg":3},
                     margin=ft.margin.only(bottom=8 if page.width and page.width < 768 else 0, top=5), # Adjusted
-                    min_height=100 # Adjusted
+                    height=100 # Adjusted
                 ),
                 ft.Container(
                     content=action_area, # Content built in update_ui
