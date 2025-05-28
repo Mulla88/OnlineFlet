@@ -340,47 +340,36 @@ def min_fina_online_logic(page: ft.Page, go_home_fn, send_action_fn, room_code: 
         question_display_area.controls.clear()
 
         if current_phase == "LOBBY":
-            min_players_to_start = gs.get("min_players_for_game", 3)
-            num_players_setting_lobby = gs.get("num_players_setting", min_players_to_start)
+            min_players_to_start = 3
             current_player_count = len(players_in_room)
 
-            action_area.controls.append(ft.Text(f"اللاعبون المطلوبون: {num_players_setting_lobby}.", text_align=ft.TextAlign.CENTER, size=16)) # Adjusted
+            action_area.controls.append(
+                ft.Text("اللعبة تبدأ عند وجود 3 لاعبين أو أكثر.", text_align=ft.TextAlign.CENTER, size=16)
+            )
 
             if is_host:
-                num_display_host = ft.Text(str(num_players_setting_lobby), size=26, weight=ft.FontWeight.BOLD) # Adjusted
-                def update_num_players_setting_host(delta):
-                    current_val = gs.get("num_players_setting", 3)
-                    new_val = max(3, min(12, current_val + delta))
-                    send_action_fn("SET_NUM_PLAYERS_HOST", {"num_players": new_val})
+                can_host_start = current_player_count >= min_players_to_start
 
-                action_area.controls.extend([
-                    ft.Text("حدد عدد اللاعبين:", text_align=ft.TextAlign.CENTER, size=15), # Adjusted
-                    ft.ResponsiveRow(
-                        [
-                            ft.IconButton(ft.Icons.REMOVE_CIRCLE_OUTLINE, on_click=lambda e: update_num_players_setting_host(-1), col={"xs":4}, icon_size=26), # Adjusted
-                            ft.Container(content=num_display_host, col={"xs":4}, alignment=ft.alignment.center),
-                            ft.IconButton(ft.Icons.ADD_CIRCLE_OUTLINE, on_click=lambda e: update_num_players_setting_host(1), col={"xs":4}, icon_size=26), # Adjusted
-                        ], alignment=ft.MainAxisAlignment.CENTER, vertical_alignment=ft.CrossAxisAlignment.CENTER, spacing=3 # Adjusted
-                    )
-                ])
-
-                can_host_start = current_player_count >= num_players_setting_lobby and \
-                                 current_player_count >= min_players_to_start
-
-                start_button = ft.ElevatedButton("🚀 ابدأ اللعبة", # Compacted
-                                     on_click=lambda e: send_action_fn("START_NEW_QUESTION_HOST"),
-                                     disabled=not can_host_start,
-                                     width=280, height=50, style=ft.ButtonStyle(shape=ft.RoundedRectangleBorder(radius=10))) # Adjusted
+                start_button = ft.ElevatedButton(
+                    "🚀 ابدأ اللعبة",
+                    on_click=lambda e: send_action_fn("START_NEW_QUESTION_HOST"),
+                    disabled=not can_host_start,
+                    width=280,
+                    height=50,
+                    style=ft.ButtonStyle(shape=ft.RoundedRectangleBorder(radius=10))
+                )
                 action_area.controls.append(start_button)
 
                 if not can_host_start:
-                    needed_lobby = num_players_setting_lobby - current_player_count
-                    if needed_lobby > 0 :
-                         action_area.controls.append(ft.Text(f"تحتاج لـ {needed_lobby} لاعبين إضافيين.", color=ft.Colors.ORANGE_ACCENT_700, text_align=ft.TextAlign.CENTER, size=13)) # Adjusted
-                    elif current_player_count < min_players_to_start:
-                         action_area.controls.append(ft.Text(f"تحتاج لـ {min_players_to_start - current_player_count} كحد أدنى.", color=ft.Colors.RED_700, text_align=ft.TextAlign.CENTER, size=13)) # Adjusted
+                    players_needed = min_players_to_start - current_player_count
+                    action_area.controls.append(
+                        ft.Text(f"تحتاج إلى {players_needed} لاعبين إضافيين.", color=ft.Colors.RED_700, text_align=ft.TextAlign.CENTER, size=13)
+                    )
             else:
-                 action_area.controls.append(ft.Text(f"الهوست يجهز اللعبة لـ {num_players_setting_lobby} لاعبين.", text_align=ft.TextAlign.CENTER, size=15)) # Adjusted
+                action_area.controls.append(
+                    ft.Text("في انتظار الهوست لبدء اللعبة.", text_align=ft.TextAlign.CENTER, size=15)
+                )
+
 
         elif current_phase == "QUESTION_DISPLAY":
             current_q_online = gs.get("current_question", "انتظر السؤال...")
