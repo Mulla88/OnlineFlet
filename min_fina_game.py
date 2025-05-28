@@ -535,8 +535,7 @@ def min_fina_online_logic(page: ft.Page, go_home_fn, send_action_fn, room_code: 
                     border=ft.border.all(1, ft.Colors.with_opacity(0.5, ft.Colors.OUTLINE)), # Adjusted
                     border_radius=8, # Adjusted
                     col={"xs": 12, "md": 4},
-                    margin=ft.margin.only(bottom=8 if page.width and page.width < 768 else 0, top=5), # Added top margin, adjusted
-                    min_height=120 # Adjusted
+                    margin=ft.margin.only(bottom=8 if page.width and page.width < 768 else 0, top=5) # Added top margin, adjusted
                 ),
                 ft.Container(
                     content=action_area,

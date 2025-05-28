@@ -784,7 +784,6 @@ def bedoon_kalam_online_logic(page: ft.Page, go_home_fn, send_action_fn, room_co
                     border_radius=STANDARD_BORDER_RADIUS,
                     col={"xs": 12, "md": 4},
                     margin=ft.margin.only(bottom=8 if page.width and page.width < 768 else 0, top=5)
-                    # Removed min_height from here
                 ),
                 ft.Container(
                     content=action_area_online,
