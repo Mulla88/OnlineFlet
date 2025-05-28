@@ -4,8 +4,8 @@ import time
 import random
 import string
 
-def generate_room_code(length=5): # Alphabetical only
-    return ''.join(random.choices(string.ascii_uppercase, k=length))
+def generate_room_code(length=3): # Alphabetical only
+    return ''.join(random.choices(string.digits, k=length))
 
 # online_helpers.py
 # ... (imports) ...
