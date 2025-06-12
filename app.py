@@ -550,41 +550,43 @@ def main(page: ft.Page):
         print(f"--- ROUTE CHANGE END --- New top view: {page.views[-1].route if page.views else 'EMPTY'}, page.route is now: {page.route}")
 
 
-    # =================================================================
-    # === MODIFIED FUNCTION TO FIX THE "pop from empty list" ERROR ===
-    # =================================================================
     def view_pop(e: ft.ViewPopEvent):
-        current_view_route_being_popped = e.view.route if e.view else "N/A"
-        print(f"--- VIEW POP START --- Popping: '{current_view_route_being_popped}'. page.views count BEFORE pop: {len(page.views)}")
+        # e.view is the view that Flet *has already popped* from page.views.
+        # page.views at this point reflects the stack *after* Flet's internal pop.
+
+        view_that_was_popped_route = "N/A (e.view was None)"
+        if e.view:
+            view_that_was_popped_route = e.view.route if e.view.route else "N/A (e.view.route was None)"
+        
+        print(f"--- VIEW POP EVENT START ---")
+        print(f"    Event's view (e.view) instance: {'Exists' if e.view else 'None'}")
+        print(f"    Route of view that was popped: '{view_that_was_popped_route}'")
+        # This count is CRITICAL: it's the number of views remaining AFTER Flet popped e.view
+        print(f"    page.views count (after Flet's internal pop): {len(page.views)}")
 
         # Special handling for leaving an online game view via back button/gesture
         if e.view and e.view.route and e.view.route.startswith("/game/") and "/online/" in e.view.route:
-            print(f"Online game view pop detected for route: {e.view.route}. Triggering go_home to clean up session.")
-            go_home() # This handles session cleanup and navigation.
-            return    # Exit immediately since go_home() will trigger a new route_change.
+            print(f"    Online game view ({e.view.route}) was popped. Triggering go_home() for session cleanup.")
+            go_home()  # go_home() will call page.go("/"), which triggers route_change.
+            print(f"--- VIEW POP EVENT END (go_home called, navigation handled by it) ---")
+            return     # Exit immediately since go_home() handles navigation.
 
-        # Corrected logic for all other pops
-        # Since route_change clears views, we pop our current view and then navigate "up" the URL path.
-        # This will trigger route_change to build the previous view correctly.
-        
-        # Check if there are any views to pop to prevent the error.
-        if page.views:
-            page.views.pop()
-        
-        if len(page.views) > 0:
-            # If a view remains in the stack, go to its route.
-            top_view = page.views[-1]
-            print(f"Popped. Navigating back to: {top_view.route}")
-            page.go(top_view.route)
-        else:
-            # If the stack is empty after popping, it means we should go to the home page.
-            print("View stack empty after pop. Navigating to home ('/').")
+        # Standard navigation logic for all other pops:
+        if not page.views:
+            # If page.views is empty AFTER Flet popped e.view, it means the last view was popped.
+            # Navigate to the home page.
+            print(f"    View stack is now empty. Navigating to home ('/').")
             page.go("/")
+        else:
+            # If there are views remaining in the stack, navigate to the route of the new top-most view.
+            # This ensures the URL bar and displayed content are synchronized with the stack.
+            new_top_view = page.views[-1]
+            print(f"    View stack is not empty. New top view is '{new_top_view.route}'. Navigating to it.")
+            page.go(new_top_view.route)
         
-        print(f"--- VIEW POP END ---")
-    # =================================================================
-    # === END OF MODIFIED FUNCTION ===
-    # =================================================================
+        # page.update() is generally not needed here because page.go() will trigger 
+        # route_change, which itself calls page.update().
+        print(f"--- VIEW POP EVENT END (standard navigation initiated by page.go()) ---")
 
     page.on_route_change = route_change
     page.on_view_pop = view_pop

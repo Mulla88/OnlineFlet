@@ -337,13 +337,15 @@ def sudoku_online_logic(page: ft.Page, go_home_fn, send_action_fn, room_code: st
     )
     ONLINE_USER_ENTERED_COLOR = ft.colors.DEEP_PURPLE_ACCENT_700 
     ONLINE_INITIAL_NUMBER_COLOR = ft.colors.BLACK87
+    ONLINE_CONFLICT_BORDER_COLOR = ft.colors.RED_ACCENT_700 # <-- ADDED
     ONLINE_DEFAULT_BORDER_COLOR = ft.colors.BLACK54
     ONLINE_SELECTED_CELL_BG_COLOR = ft.colors.LIGHT_GREEN_ACCENT_100
     ONLINE_INITIAL_CELL_BG_COLOR = ft.colors.BLUE_GREY_50
     ONLINE_NORMAL_CELL_BG_COLOR = ft.colors.WHITE
     ONLINE_SOLUTION_SHOWN_COLOR = ft.colors.GREEN_ACCENT_700
 
-    def update_cell_display_online(r, c, value_to_display, is_initial, is_selected, is_solution_shown=False):
+    # MODIFIED: Added is_conflicting parameter
+    def update_cell_display_online(r, c, value_to_display, is_initial, is_selected, is_conflicting, is_solution_shown=False):
         cell_text_control = text_controls_online[r][c]
         if cell_text_control:
             cell_text_control.value = str(value_to_display) if value_to_display != 0 else ""
@@ -369,7 +371,8 @@ def sudoku_online_logic(page: ft.Page, go_home_fn, send_action_fn, room_code: st
                 else:
                     cell_container.bgcolor = ONLINE_NORMAL_CELL_BG_COLOR
                 
-                current_border_color = ONLINE_DEFAULT_BORDER_COLOR 
+                # MODIFIED: Check for conflicts to set border color
+                current_border_color = ONLINE_CONFLICT_BORDER_COLOR if is_conflicting and not is_initial and not is_solution_shown else ONLINE_DEFAULT_BORDER_COLOR
                 
                 cell_container.border = ft.border.Border(
                     top=ft.border.BorderSide(SUDOKU_GRID_BORDER_THICKNESS_BOLD if r % 3 == 0 else SUDOKU_GRID_BORDER_THICKNESS_NORMAL, current_border_color),
@@ -412,16 +415,25 @@ def sudoku_online_logic(page: ft.Page, go_home_fn, send_action_fn, room_code: st
         sudoku_grid_container_online.visible = True
         refresh_grid_display_online()
 
+    # MODIFIED: Reads conflict data and passes it to the update function
     def refresh_grid_display_online():
         if not online_state["user_board"]: return 
         selected_r, selected_c = online_state.get("selected_cell_coord") or (-1, -1)
         is_solution_shown_locally = online_state["local_game_step"] == "solution_shown"
+        
+        # ADDED: Logic to get conflicting cells for display
+        show_conflicts = online_state.get("difficulty_online") == "easy"
+        conflicts_to_show = online_state.get("conflicting_cells", set()) if show_conflicts else set()
+        
         for r in range(9):
             for c in range(9):
                 is_initial = (r,c) in online_state["initial_cells"]
                 is_selected = (r == selected_r and c == selected_c)
+                # ADDED: Check if the current cell is conflicting
+                is_conflicting_for_cell = show_conflicts and (r,c) in conflicts_to_show
                 current_value_to_display = online_state["solution_board_from_server"][r][c] if is_solution_shown_locally and online_state["solution_board_from_server"] else online_state["user_board"][r][c]
-                update_cell_display_online(r, c, current_value_to_display, is_initial, is_selected, is_solution_shown_locally)
+                # MODIFIED: Pass the new 'is_conflicting_for_cell' boolean
+                update_cell_display_online(r, c, current_value_to_display, is_initial, is_selected, is_conflicting_for_cell, is_solution_shown_locally)
         if page.client_storage: page.update()
 
     def handle_cell_click_online(r_clicked, c_clicked):
@@ -440,13 +452,22 @@ def sudoku_online_logic(page: ft.Page, go_home_fn, send_action_fn, room_code: st
         refresh_grid_display_online() 
         if page.client_storage: number_palette_online.update()
 
+    # MODIFIED: Added logic to calculate conflicts on number placement
     def handle_palette_number_click_online(num_clicked):
         if online_state.get("is_game_over_globally") or online_state["local_game_step"] == "solution_shown": return
         selected_coord = online_state.get("selected_cell_coord")
         if selected_coord and online_state["user_board"]:
             r, c = selected_coord
             online_state["user_board"][r][c] = num_clicked
-            online_state["client_solution_check_passed"] = False 
+            online_state["client_solution_check_passed"] = False
+
+            # ADDED: Calculate conflicts if difficulty is 'easy'
+            if online_state.get("difficulty_online") == "easy":
+                _, new_conflicts = validate_board_rules_and_get_conflicts(online_state["user_board"])
+                online_state["conflicting_cells"] = new_conflicts
+            else:
+                online_state["conflicting_cells"] = set()
+
             refresh_grid_display_online()
             if page.client_storage: 
                 current_room_state = game_rooms_ref.get(room_code, {})
