@@ -21,7 +21,6 @@ NUMBER_PALETTE_BUTTON_SIZE = 40
 
 
 # --- OFFLINE MODE LOGIC ---
-# ... (no changes to offline logic as it's single-threaded and works) ...
 def sudoku_offline_logic(page: ft.Page, go_home_fn):
     offline_state = {
         "puzzle_board": None, "solution_board": None, "user_board": None,
@@ -126,13 +125,13 @@ def sudoku_offline_logic(page: ft.Page, go_home_fn):
         show_conflicts = offline_state["difficulty"] == "easy"
         conflicts_to_show = offline_state.get("conflicting_cells", set()) if show_conflicts else set()
         is_solution_shown_state = offline_state["step"] == "solution_shown"
-        for r in range(9):
-            for c in range(9):
-                is_initial = (r,c) in offline_state["initial_cells"]
-                is_selected = (r == selected_r and c == selected_c)
-                is_conflicting_for_cell = show_conflicts and (r,c) in conflicts_to_show
-                current_value_to_display = offline_state["solution_board"][r][c] if is_solution_shown_state else user_board[r][c]
-                update_cell_display_offline(r, c, current_value_to_display, is_initial, is_selected, is_conflicting_for_cell, is_solution_shown_state)
+        for r_val in range(9):
+            for c_val in range(9):
+                is_initial = (r_val,c_val) in offline_state["initial_cells"]
+                is_selected = (r_val == selected_r and c_val == selected_c)
+                is_conflicting_for_cell = show_conflicts and (r_val,c_val) in conflicts_to_show
+                current_value_to_display = offline_state["solution_board"][r_val][c_val] if is_solution_shown_state else user_board[r_val][c_val]
+                update_cell_display_offline(r_val, c_val, current_value_to_display, is_initial, is_selected, is_conflicting_for_cell, is_solution_shown_state)
 
     def handle_cell_click_offline(r_clicked, c_clicked):
         if (r_clicked, c_clicked) in offline_state["initial_cells"] or \
@@ -320,7 +319,7 @@ def sudoku_offline_logic(page: ft.Page, go_home_fn):
 # --- ONLINE MODE CLIENT-SIDE LOGIC ---
 def sudoku_online_logic(page: ft.Page, go_home_fn, send_action_fn, room_code: str, current_player_name: str, game_rooms_ref):
     
-    ui_lock = threading.Lock() # <--- DEFINE THE LOCK HERE
+    ui_lock = threading.Lock()
 
     online_state = {
         "user_board": None,
@@ -427,16 +426,16 @@ def sudoku_online_logic(page: ft.Page, go_home_fn, send_action_fn, room_code: st
         is_solution_shown_locally = online_state["local_game_step"] == "solution_shown"
         show_conflicts = online_state.get("difficulty_online") == "easy"
         conflicts_to_show = online_state.get("conflicting_cells", set()) if show_conflicts else set()
-        for r in range(9):
-            for c in range(9):
-                is_initial = (r,c) in online_state["initial_cells"]
-                is_selected = (r == selected_r and c == selected_c)
-                is_conflicting_for_cell = show_conflicts and (r,c) in conflicts_to_show
-                current_value_to_display = online_state["solution_board_from_server"][r][c] if is_solution_shown_locally and online_state["solution_board_from_server"] else online_state["user_board"][r][c]
-                update_cell_display_online(r, c, current_value_to_display, is_initial, is_selected, is_conflicting_for_cell, is_solution_shown_locally)
+        for r_val in range(9):
+            for c_val in range(9):
+                is_initial = (r_val,c_val) in online_state["initial_cells"]
+                is_selected = (r_val == selected_r and c_val == selected_c)
+                is_conflicting_for_cell = show_conflicts and (r_val,c_val) in conflicts_to_show
+                current_value_to_display = online_state["solution_board_from_server"][r_val][c_val] if is_solution_shown_locally and online_state["solution_board_from_server"] else online_state["user_board"][r_val][c_val]
+                update_cell_display_online(r_val, c_val, current_value_to_display, is_initial, is_selected, is_conflicting_for_cell, is_solution_shown_locally)
 
     def handle_cell_click_online(r_clicked, c_clicked):
-        with ui_lock: # <--- ACQUIRE LOCK
+        with ui_lock: 
             if (r_clicked, c_clicked) in online_state["initial_cells"] or \
                online_state.get("is_game_over_globally") or \
                online_state["local_game_step"] == "solution_shown":
@@ -452,32 +451,30 @@ def sudoku_online_logic(page: ft.Page, go_home_fn, send_action_fn, room_code: st
             refresh_grid_display_online() 
             if page.client_storage:
                 page.update()
-        # LOCK IS RELEASED AUTOMATICALLY
 
     def handle_palette_number_click_online(num_clicked):
-        with ui_lock: # <--- ACQUIRE LOCK
+        with ui_lock: 
             if online_state.get("is_game_over_globally") or online_state["local_game_step"] == "solution_shown": return
             selected_coord = online_state.get("selected_cell_coord")
             if selected_coord and online_state["user_board"]:
                 r, c = selected_coord
-                online_state["user_board"][r][c] = num_clicked
-                online_state["client_solution_check_passed"] = False
+                online_state["user_board"][r][c] = num_clicked 
+                online_state["client_solution_check_passed"] = False 
                 if online_state.get("difficulty_online") == "easy":
                     _, new_conflicts = validate_board_rules_and_get_conflicts(online_state["user_board"])
                     online_state["conflicting_cells"] = new_conflicts
                 else:
                     online_state["conflicting_cells"] = set()
                 
-                refresh_grid_display_online() # Update properties
-                # Instead of calling update_ui_from_server_state_online_sudoku, just update the page for local changes.
-                # Server-driven changes will come via on_server_message.
+                refresh_grid_display_online() 
+                
                 if page.client_storage:
-                    page.update() 
-        # LOCK IS RELEASED AUTOMATICALLY
+                    # This was the previous version that caused issues if update_ui was too heavy or complex
+                    # current_room_state = game_rooms_ref.get(room_code, {})
+                    # update_ui_from_server_state_online_sudoku(current_room_state, acquired_lock=True)
+                    page.update() # Simpler update for palette click, only refreshes local changes
 
     def create_number_palette_online():
-        # This function only builds structure, no page.update, so lock might not be strictly needed
-        # unless it's called concurrently with other UI mods. For safety, it's fine.
         with ui_lock:
             number_palette_online.controls.clear()
             row1_controls = []
@@ -495,24 +492,22 @@ def sudoku_online_logic(page: ft.Page, go_home_fn, send_action_fn, room_code: st
             number_palette_online.controls.extend([row1, row2])
 
     def client_check_solution_online(e):
-        with ui_lock: # <--- ACQUIRE LOCK
-            print(f"[DEBUG] 'تحقق من حلي' button clicked by {current_player_name}")
+        with ui_lock: 
+            print(f"Client: 'client_check_solution_online' called by {current_player_name}")
             if not page.client_storage:
-                print("[DEBUG] page.client_storage not available")
+                print("Client: page.client_storage not available in client_check_solution_online")
                 return
             if online_state["user_board"]:
-                print("[DEBUG] Current board state:")
-                for i, row_val in enumerate(online_state["user_board"]):
-                    print(f"[DEBUG] Row {i+1}: {row_val}")
+                pass # print("[DEBUG] Current board state: ...")
             if not online_state["user_board"] or online_state.get("is_game_over_globally") or online_state["local_game_step"] == "solution_shown":
-                print("[DEBUG] Validation skipped - invalid state")
+                print("Client: Validation skipped - invalid state in client_check_solution_online")
                 return
 
             snack_message = ""
             snack_bgcolor = None
             temp_client_solution_check_passed = False
             solution_board = online_state["solution_board_from_server"]
-            print(f"[DEBUG] Solution board available: {bool(solution_board)}")
+            # print(f"Client: Solution board available for check: {bool(solution_board)}")
 
             if not solution_board:
                 snack_message = "بيانات الحل غير متوفرة للتحقق المحلي."
@@ -520,7 +515,7 @@ def sudoku_online_logic(page: ft.Page, go_home_fn, send_action_fn, room_code: st
                 snack_message = "⚠️ اللغز لم يكتمل. أكمل ملء الخانات!"
             else:
                 is_correct_locally, _ = check_solution_correctness(online_state["user_board"], solution_board)
-                print(f"[DEBUG] Local validation result: {'Correct' if is_correct_locally else 'Incorrect'}")
+                # print(f"Client: Local validation result: {'Correct' if is_correct_locally else 'Incorrect'}")
                 if is_correct_locally:
                     snack_message = "✅ يبدو أن الحل صحيح! يمكنك الآن إرساله للخادم."
                     snack_bgcolor = ft.Colors.GREEN_ACCENT_700
@@ -529,7 +524,7 @@ def sudoku_online_logic(page: ft.Page, go_home_fn, send_action_fn, room_code: st
                     snack_message = "⚠️ الحل الذي أدخلته غير صحيح محلياً. راجعه."
                     snack_bgcolor = ft.Colors.RED_ACCENT_100
             online_state["client_solution_check_passed"] = temp_client_solution_check_passed
-            print(f"[DEBUG] Validation state updated: {temp_client_solution_check_passed}")
+            # print(f"Client: Validation state updated: {temp_client_solution_check_passed}")
 
             if snack_message and page.client_storage:
                 snackbar = ft.SnackBar(
@@ -538,19 +533,15 @@ def sudoku_online_logic(page: ft.Page, go_home_fn, send_action_fn, room_code: st
                 )
                 page.overlay.append(snackbar) 
                 snackbar.open = True 
-                print(f"[DEBUG] Showing snackbar: {snack_message}")
+                # print(f"Client: Showing snackbar: {snack_message}")
             
-            print("[DEBUG] Updating UI from server state after client check")
+            # print("Client: Updating UI from server state after client check")
             current_room_state = game_rooms_ref.get(room_code, {})
-            # This call is already wrapped by the lock of client_check_solution_online
             update_ui_from_server_state_online_sudoku(current_room_state, acquired_lock=True)
-        # LOCK IS RELEASED AUTOMATICALLY
 
     def submit_solution_to_server_online(e):
-        # This function mainly sends an action. UI update will come from server response.
-        # Lock might not be strictly needed here if it doesn't directly call page.update().
-        # However, it calls update_ui_from_server_state_online_sudoku for local feedback.
-        with ui_lock: # <--- ACQUIRE LOCK
+        with ui_lock: 
+            print(f"Client: 'submit_solution_to_server_online' called by {current_player_name}")
             if not online_state["user_board"] or \
                online_state.get("is_game_over_globally") or \
                online_state["local_game_step"] == "solution_shown" or \
@@ -558,16 +549,17 @@ def sudoku_online_logic(page: ft.Page, go_home_fn, send_action_fn, room_code: st
                 if page.client_storage and not online_state["client_solution_check_passed"]:
                      page.snack_bar = ft.SnackBar(ft.Text("الرجاء الضغط على 'تحقق من حلي' أولاً والتأكد أنه صحيح محلياً."), open=True)
                      page.update() 
+                print("Client: Submit solution preconditions not met.")
                 return
+            
+            print(f"Client: Sending SUBMIT_SUDOKU_SOLUTION by {current_player_name}")
             send_action_fn("SUBMIT_SUDOKU_SOLUTION", {"board": online_state["user_board"]})
-            online_state["client_solution_check_passed"] = False # Reset after submission
+            online_state["client_solution_check_passed"] = False 
             if page.client_storage: 
-                # This call is already wrapped by the lock of submit_solution_to_server_online
                 update_ui_from_server_state_online_sudoku(game_rooms_ref.get(room_code, {}), acquired_lock=True)
-        # LOCK IS RELEASED AUTOMATICALLY
 
     def show_solution_online_client_side(e):
-        with ui_lock: # <--- ACQUIRE LOCK
+        with ui_lock: 
             if online_state["local_game_step"] == "playing" and online_state["solution_board_from_server"] and not online_state.get("is_game_over_globally"):
                 online_state["local_game_step"] = "solution_shown"
                 if page.client_storage:
@@ -576,23 +568,25 @@ def sudoku_online_logic(page: ft.Page, go_home_fn, send_action_fn, room_code: st
                 number_palette_online.visible = False 
                 refresh_grid_display_online() 
                 if page.client_storage: 
-                    # This call is already wrapped by the lock of show_solution_online_client_side
                     update_ui_from_server_state_online_sudoku(game_rooms_ref.get(room_code, {}), acquired_lock=True)
             elif not online_state["solution_board_from_server"] and page.client_storage:
                 page.snack_bar = ft.SnackBar(ft.Text("بيانات الحل غير متوفرة لعرضها."), open=True)
-                page.update() # For snackbar, safe as it's within lock
-        # LOCK IS RELEASED AUTOMATICALLY
+                page.update()
 
-    # Modified to accept an optional acquired_lock parameter
     def update_ui_from_server_state_online_sudoku(room_state_from_server, acquired_lock=False):
         
         def _do_update():
-            if not page.client_storage: return 
+            if not page.client_storage: 
+                print("Client: page.client_storage is None in _do_update. Aborting UI update.")
+                return 
 
             gs = room_state_from_server.get("game_state", {})
             players_in_room = room_state_from_server.get("players", {})
             is_host = players_in_room.get(current_player_name, {}).get("is_host", False)
             current_phase = gs.get("phase", "LOBBY")
+            
+            # print(f"Client: _do_update. Phase: {current_phase}. Puzzle: {'Yes' if gs.get('puzzle_board') else 'No'}")
+
 
             status_text_online.value = gs.get("status_message", "...")
             online_state["is_game_over_globally"] = (current_phase == "GAME_OVER")
@@ -610,6 +604,7 @@ def sudoku_online_logic(page: ft.Page, go_home_fn, send_action_fn, room_code: st
             action_area_online.controls.clear()
 
             if current_phase == "LOBBY":
+                # print("Client: Rendering LOBBY phase UI")
                 online_state["local_game_step"] = "playing"
                 online_state["client_solution_check_passed"] = False
                 sudoku_grid_container_online.visible = False
@@ -618,56 +613,99 @@ def sudoku_online_logic(page: ft.Page, go_home_fn, send_action_fn, room_code: st
                 number_palette_online.controls.clear() 
                 online_state["user_board"] = None
                 online_state["puzzle_board_from_server"] = None
-                online_state["solution_board_from_server"] = None
+                # online_state["solution_board_from_server"] = None # Keep if already received
                 online_state["conflicting_cells"] = set()
                 online_state["selected_cell_coord"] = None
                 online_state["initial_cells"] = set()
                 action_area_online.controls.append(ft.Text("الهوست يختار مستوى الصعوبة ويبدأ.", text_align=ft.TextAlign.CENTER, size=FONT_SIZE_MEDIUM))
                 if is_host:
                     difficulty_dropdown = ft.Dropdown(label="اختر مستوى الصعوبة", options=[ft.dropdown.Option("easy", "سهل"), ft.dropdown.Option("normal", "متوسط"), ft.dropdown.Option("hard", "صعب")], value=gs.get("difficulty", "normal"), width=200)
+                    
+                    start_game_button = ft.ElevatedButton(
+                        "🚀 ابدأ سودوكو", 
+                        width=250, 
+                        height=BUTTON_HEIGHT_NORMAL
+                    )
+
+                    def on_start_game_click(e_button_click): # Renamed 'e' to avoid conflict if used elsewhere
+                        # This handler is called from the UI thread, so lock is fine.
+                        with ui_lock: # Acquire lock for this specific button action
+                            print(f"Client: 'ابدأ سودوكو' button clicked by {current_player_name}")
+                            start_game_button.disabled = True
+                            start_game_button.text = "جاري البدء..."
+                            if page.client_storage:
+                                page.update() # Update to show button disabled
+                            
+                            print(f"Client: Sending SETUP_SUDOKU_GAME action with difficulty: {difficulty_dropdown.value}")
+                            send_action_fn("SETUP_SUDOKU_GAME", {"difficulty": difficulty_dropdown.value})
+                            # The actual UI transition to PLAYING will happen via PubSub GAME_STATE_UPDATE
+
+                    start_game_button.on_click = on_start_game_click
+
                     action_area_online.controls.append(difficulty_dropdown)
-                    action_area_online.controls.append(ft.ElevatedButton("🚀 ابدأ سودوكو", on_click=lambda e: send_action_fn("SETUP_SUDOKU_GAME", {"difficulty": difficulty_dropdown.value}), width=250, height=BUTTON_HEIGHT_NORMAL))
+                    action_area_online.controls.append(start_game_button)
 
             elif current_phase == "PLAYING":
+                # print("Client: Rendering PLAYING phase UI")
                 puzzle_board = gs.get("puzzle_board")
-                grid_needs_creation = not online_state["puzzle_board_from_server"] or \
-                                      online_state["puzzle_board_from_server"] != puzzle_board or \
-                                      not sudoku_grid_container_online.controls
-                if puzzle_board and grid_needs_creation:
-                     online_state["local_game_step"] = "playing"
-                     online_state["client_solution_check_passed"] = False
-                     create_sudoku_grid_ui_online(puzzle_board)
-                if puzzle_board and sudoku_grid_container_online.controls:
-                     refresh_grid_display_online() 
-                     sudoku_grid_container_online.visible = True
-                if not number_palette_online.controls: create_number_palette_online()
-                can_interact_client = not online_state.get("is_game_over_globally") and online_state["local_game_step"] == "playing"
-                if online_state.get("selected_cell_coord") and can_interact_client:
-                    number_palette_online.visible = True
-                elif not can_interact_client: 
-                    number_palette_online.visible = False
-                action_area_online.controls.append(
-                    ft.ElevatedButton("🤔 تحقق من حلي", on_click=client_check_solution_online, width=200, height=BUTTON_HEIGHT_NORMAL,
-                                      disabled=not can_interact_client)
-                )
-                action_area_online.controls.append(
-                    ft.ElevatedButton("🏁 إرسال الحل للخادم", on_click=submit_solution_to_server_online, width=220, height=BUTTON_HEIGHT_NORMAL,
-                                      disabled=not (can_interact_client and online_state["client_solution_check_passed"]),
-                                      bgcolor=ft.Colors.GREEN_ACCENT_200 if (can_interact_client and online_state["client_solution_check_passed"]) else None)
-                )
-                if online_state["solution_board_from_server"]:
+                if not puzzle_board:
+                    print("Client: ERROR - PLAYING phase but no puzzle_board from server!")
+                    status_text_online.value = "خطأ: لم يتم استلام لوحة اللغز من الخادم."
+                    # Potentially clear action_area or show an error message
+                else:
+                    grid_needs_creation = not online_state["puzzle_board_from_server"] or \
+                                          online_state["puzzle_board_from_server"] != puzzle_board or \
+                                          not sudoku_grid_container_online.controls
+                    if grid_needs_creation:
+                         # print("Client: Creating Sudoku grid UI for PLAYING phase.")
+                         online_state["local_game_step"] = "playing"
+                         online_state["client_solution_check_passed"] = False
+                         create_sudoku_grid_ui_online(puzzle_board)
+                    
+                    if sudoku_grid_container_online.controls: # Ensure grid was actually created
+                         refresh_grid_display_online() 
+                         sudoku_grid_container_online.visible = True
+                    else:
+                        # This case should ideally not be reached if puzzle_board is valid
+                        sudoku_grid_container_online.visible = False
+                        print("Client: Sudoku grid controls are missing in PLAYING phase despite puzzle_board.")
+
+
+                    if not number_palette_online.controls: create_number_palette_online()
+                    
+                    can_interact_client = not online_state.get("is_game_over_globally") and online_state["local_game_step"] == "playing"
+                    
+                    if online_state.get("selected_cell_coord") and can_interact_client:
+                        number_palette_online.visible = True
+                    elif not can_interact_client: 
+                        number_palette_online.visible = False
+                    
                     action_area_online.controls.append(
-                        ft.ElevatedButton("🏳️ استسلام (أظهر الحل لي)", on_click=show_solution_online_client_side, width=250, height=BUTTON_HEIGHT_NORMAL,
-                                          bgcolor=ft.Colors.AMBER_200, disabled=not can_interact_client)
+                        ft.ElevatedButton("🤔 تحقق من حلي", on_click=client_check_solution_online, width=200, height=BUTTON_HEIGHT_NORMAL,
+                                          disabled=not can_interact_client)
                     )
-                difficulty_display = gs.get("difficulty", "غير محدد")
-                action_area_online.controls.append(ft.Text(f"مستوى الصعوبة: {difficulty_display}", size=FONT_SIZE_MEDIUM))
+                    action_area_online.controls.append(
+                        ft.ElevatedButton("🏁 إرسال الحل للخادم", on_click=submit_solution_to_server_online, width=220, height=BUTTON_HEIGHT_NORMAL,
+                                          disabled=not (can_interact_client and online_state["client_solution_check_passed"]),
+                                          bgcolor=ft.Colors.GREEN_ACCENT_200 if (can_interact_client and online_state["client_solution_check_passed"]) else None)
+                    )
+                    if online_state["solution_board_from_server"]:
+                        action_area_online.controls.append(
+                            ft.ElevatedButton("🏳️ استسلام (أظهر الحل لي)", on_click=show_solution_online_client_side, width=250, height=BUTTON_HEIGHT_NORMAL,
+                                              bgcolor=ft.Colors.AMBER_200, disabled=not can_interact_client)
+                        )
+                    difficulty_display = gs.get("difficulty", "غير محدد")
+                    action_area_online.controls.append(ft.Text(f"مستوى الصعوبة: {difficulty_display}", size=FONT_SIZE_MEDIUM))
 
             elif current_phase == "GAME_OVER":
-                if not sudoku_grid_container_online.controls and (online_state["user_board"] or gs.get("puzzle_board")):
-                    board_to_display = online_state["user_board"] if online_state["user_board"] else gs.get("puzzle_board")
-                    if board_to_display:
-                        create_sudoku_grid_ui_online(board_to_display)
+                # print("Client: Rendering GAME_OVER phase UI")
+                board_to_show_on_game_over = online_state["user_board"] # Show user's attempt
+                if not board_to_show_on_game_over: # Fallback if user_board somehow not set
+                    board_to_show_on_game_over = gs.get("puzzle_board")
+
+                if not sudoku_grid_container_online.controls and board_to_show_on_game_over:
+                    create_sudoku_grid_ui_online(board_to_show_on_game_over)
+
                 if sudoku_grid_container_online.controls: 
                     refresh_grid_display_online() 
                     sudoku_grid_container_online.visible = True
@@ -675,6 +713,7 @@ def sudoku_online_logic(page: ft.Page, go_home_fn, send_action_fn, room_code: st
                     sudoku_grid_container_online.visible = False
                     sudoku_grid_container_online.controls.clear()
                     sudoku_grid_container_online.controls.append(ft.Text("انتهت اللعبة.", text_align=ft.TextAlign.CENTER))
+                
                 number_palette_online.visible = False 
                 online_state["selected_cell_coord"] = None 
                 winner_name = gs.get("winner", "غير معروف")
@@ -683,61 +722,68 @@ def sudoku_online_logic(page: ft.Page, go_home_fn, send_action_fn, room_code: st
                     action_area_online.controls.append(ft.ElevatedButton("🔄 العب مرة أخرى؟", on_click=lambda e: send_action_fn("RESTART_SUDOKU_GAME"), width=200, height=BUTTON_HEIGHT_NORMAL))
             
             page.update()
+            # print("Client: page.update() called in _do_update")
 
-        if acquired_lock: # If lock is already held by the caller
+        if acquired_lock: 
             _do_update()
         else:
-            with ui_lock: # Acquire lock if not already held
+            with ui_lock: 
                 _do_update()
-        # LOCK IS RELEASED AUTOMATICALLY (if acquired in this function)
 
     def on_server_message_online_sudoku(*args_received):
-        # This function is called from a PubSub background thread.
-        # It needs to acquire the lock before calling update_ui_from_server_state_online_sudoku.
-        # update_ui_from_server_state_online_sudoku itself will then handle the lock.
-        with ui_lock: # <--- ACQUIRE LOCK for the whole message processing that leads to UI update
-            if not page.client_storage: return
+        with ui_lock: 
+            # print(f"Client: on_server_message_online_sudoku received: {args_received}")
+            if not page.client_storage: 
+                print("Client: page.client_storage is None in on_server_message. Aborting.")
+                return
             if not args_received or len(args_received) < 2: return
             msg_data = args_received[1]
             if not isinstance(msg_data, dict): return
             msg_type = msg_data.get("type")
+            # print(f"Client: PubSub message type: {msg_type}")
+
 
             current_room_full_state = game_rooms_ref.get(room_code, {}) 
-            if not current_room_full_state: return 
-            current_gs_from_room = current_room_full_state.get("game_state", {})
+            if not current_room_full_state: 
+                print(f"Client: Room {room_code} not found in game_rooms_ref during on_server_message.")
+                return 
+            # current_gs_from_room = current_room_full_state.get("game_state", {}) # Already captured by gs in update_ui
 
             if msg_type == "GAME_STATE_UPDATE":
                 room_state_from_msg = msg_data.get("room_state")
                 if room_state_from_msg and isinstance(room_state_from_msg, dict) and room_state_from_msg.get("game_type") == "sudoku":
                     gs_updated = room_state_from_msg.get("game_state",{})
+                    # print(f"Client: GAME_STATE_UPDATE received. New phase: {gs_updated.get('phase')}")
                     if "solution_board" in gs_updated and gs_updated["solution_board"]: 
                          online_state["solution_board_from_server"] = gs_updated["solution_board"]
-                    update_ui_from_server_state_online_sudoku(room_state_from_msg, acquired_lock=True) # Pass lock status
+                    update_ui_from_server_state_online_sudoku(room_state_from_msg, acquired_lock=True)
             elif msg_type == "SUDOKU_SUBMISSION_FEEDBACK":
                 if msg_data.get("feedback_for_player") == current_player_name:
                     feedback_txt = msg_data.get("feedback_message", "تم استلام الرد.")
                     if page.client_storage: 
                         page.snack_bar = ft.SnackBar(ft.Text(feedback_txt, text_align=ft.TextAlign.CENTER), open=True)
-                        page.update() # snack_bar.open=True usually triggers its own update, but an explicit one is fine within lock
-
+                        page.update() 
+                    gs_for_feedback_check = game_rooms_ref.get(room_code, {}).get("game_state", {}) # Get latest for this check
                     if "كان الأسرع" in feedback_txt or \
-                       (current_gs_from_room.get("phase") == "GAME_OVER" and "فاز باللعبة" in current_gs_from_room.get("status_message","")):
+                       (gs_for_feedback_check.get("phase") == "GAME_OVER" and "فاز باللعبة" in gs_for_feedback_check.get("status_message","")):
                         online_state["is_game_over_globally"] = True 
                         if page.client_storage: 
-                            update_ui_from_server_state_online_sudoku(game_rooms_ref.get(room_code, {}), acquired_lock=True) # Pass lock status
+                            update_ui_from_server_state_online_sudoku(game_rooms_ref.get(room_code, {}), acquired_lock=True) 
             elif msg_type == "SUDOKU_SOLUTION_UPDATE": 
+                # print("Client: SUDOKU_SOLUTION_UPDATE received.")
                 solution_board = msg_data.get("solution_board")
                 if solution_board:
                     online_state["solution_board_from_server"] = solution_board
-                    update_ui_from_server_state_online_sudoku(game_rooms_ref.get(room_code, {}), acquired_lock=True) # Pass lock status
+                    # This might be redundant if GAME_STATE_UPDATE follows immediately, but safe.
+                    update_ui_from_server_state_online_sudoku(game_rooms_ref.get(room_code, {}), acquired_lock=True) 
             elif msg_type in ["PLAYER_JOINED", "PLAYER_LEFT"]:
+                 # print(f"Client: {msg_type} received.")
                  room_state_from_msg = msg_data.get("room_state") 
                  if room_state_from_msg and isinstance(room_state_from_msg, dict) and room_state_from_msg.get("game_type") == "sudoku":
                     gs_updated = room_state_from_msg.get("game_state",{})
                     if "solution_board" in gs_updated and gs_updated["solution_board"]:
                          online_state["solution_board_from_server"] = gs_updated["solution_board"]
-                    update_ui_from_server_state_online_sudoku(room_state_from_msg, acquired_lock=True) # Pass lock status
-        # LOCK IS RELEASED AUTOMATICALLY
+                    update_ui_from_server_state_online_sudoku(room_state_from_msg, acquired_lock=True) 
 
     page.pubsub.subscribe_topic(f"room_{room_code}", on_server_message_online_sudoku)
 
@@ -771,25 +817,21 @@ def sudoku_online_logic(page: ft.Page, go_home_fn, send_action_fn, room_code: st
         )
     ])
 
-    # Initial UI setup
-    with ui_lock: # <--- ACQUIRE LOCK for initial setup
+    with ui_lock: 
         initial_room_data = game_rooms_ref.get(room_code)
         if initial_room_data:
             gs_initial = initial_room_data.get("game_state", {})
             if "solution_board" in gs_initial and gs_initial["solution_board"]:
                 online_state["solution_board_from_server"] = gs_initial["solution_board"]
-            # Pass acquired_lock=True as the lock is already held
             update_ui_from_server_state_online_sudoku(initial_room_data, acquired_lock=True) 
         else:
             status_text_online.value = "خطأ في الاتصال بالغرفة."
             if page.client_storage: page.update()
-    # LOCK IS RELEASED AUTOMATICALLY
 
     return [ft.Container(content=online_main_content_column, expand=True, alignment=ft.alignment.top_center, padding=10)]
 
 
 # --- GAME ENTRY POINT ---
-# ... (no changes) ...
 def sudoku_game_entry(page: ft.Page, go_home_fn, process_action_fn, is_online: bool, room_code: str = None, player_name: str = None, game_rooms_ref=None):
     if not is_online:
         return sudoku_offline_logic(page, go_home_fn)
@@ -798,6 +840,7 @@ def sudoku_game_entry(page: ft.Page, go_home_fn, process_action_fn, is_online: b
             return [ft.Container(content=ft.Text("خطأ: بيانات اللاعب أو الغرفة غير متوفرة لسودوكو أونلاين."), alignment=ft.alignment.center, expand=True)]
 
         def send_sudoku_action_to_server_wrapper(action_type: str, payload: dict = None):
+            # print(f"Client Wrapper: Sending action {action_type} with payload {payload}") # Debug
             process_action_fn(page, room_code, player_name, "sudoku", action_type, payload or {})
 
         return sudoku_online_logic(page, go_home_fn, send_sudoku_action_to_server_wrapper, room_code, player_name, game_rooms_ref)
