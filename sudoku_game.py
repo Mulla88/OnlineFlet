@@ -184,7 +184,7 @@ def sudoku_offline_logic(page: ft.Page, go_home_fn):
             row2_controls.append(btn)
             
         clear_btn = ft.ElevatedButton(
-            content=ft.Icon(ft.icons.BACKSPACE_OUTLINED, size=NUMBER_PALETTE_BUTTON_SIZE*0.6),
+            content=ft.Icon(ft.Icons.BACKSPACE_OUTLINED, size=NUMBER_PALETTE_BUTTON_SIZE*0.6),
             on_click=lambda e: handle_palette_number_click_offline(0),
             width=NUMBER_PALETTE_BUTTON_SIZE, height=NUMBER_PALETTE_BUTTON_SIZE,
             tooltip="Clear cell", style=ft.ButtonStyle(padding=0)
@@ -207,7 +207,7 @@ def sudoku_offline_logic(page: ft.Page, go_home_fn):
         offline_state["selected_cell_coord"] = None
         offline_state["conflicting_cells"] = set() 
         offline_state["step"] = "playing"
-        status_text_offline.value = f"مستوى الصعوبة: {difficulty}. بالتوفيق!"
+        status_text_offline.value = f"بالتوفيق بدأت اللعبة"
         if difficulty != "easy":
             status_text_offline.value += " (مساعدة تظليل الأخطاء معطلة)"
         update_offline_ui_layout() 
@@ -509,7 +509,7 @@ def sudoku_online_logic(page: ft.Page, go_home_fn, send_action_fn, room_code: st
             btn = ft.ElevatedButton(str(i), on_click=lambda e, num=i: handle_palette_number_click_online(num), width=NUMBER_PALETTE_BUTTON_SIZE, height=NUMBER_PALETTE_BUTTON_SIZE, style=ft.ButtonStyle(padding=0))
             row2_controls.append(btn)
         
-        clear_btn = ft.ElevatedButton(content=ft.Icon(ft.icons.BACKSPACE_OUTLINED, size=NUMBER_PALETTE_BUTTON_SIZE*0.6), on_click=lambda e: handle_palette_number_click_online(0), width=NUMBER_PALETTE_BUTTON_SIZE, height=NUMBER_PALETTE_BUTTON_SIZE, tooltip="Clear cell", style=ft.ButtonStyle(padding=0))
+        clear_btn = ft.ElevatedButton(content=ft.Icon(ft.Icons.BACKSPACE_OUTLINED, size=NUMBER_PALETTE_BUTTON_SIZE*0.6), on_click=lambda e: handle_palette_number_click_online(0), width=NUMBER_PALETTE_BUTTON_SIZE, height=NUMBER_PALETTE_BUTTON_SIZE, tooltip="Clear cell", style=ft.ButtonStyle(padding=0))
         row2_controls.append(clear_btn)
 
         # Add the two rows to the main Column container
