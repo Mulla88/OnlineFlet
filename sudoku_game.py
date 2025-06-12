@@ -170,7 +170,7 @@ def sudoku_offline_logic(page: ft.Page, go_home_fn):
             )
             number_palette_offline.controls.append(btn)
         clear_btn = ft.ElevatedButton(
-            content=ft.Icon(ft.icons.BACKSPACE_OUTLINED, size=NUMBER_PALETTE_BUTTON_SIZE*0.6),
+            content=ft.Icon(ft.Icons.BACKSPACE_OUTLINED, size=NUMBER_PALETTE_BUTTON_SIZE*0.6),
             on_click=lambda e: handle_palette_number_click_offline(0),
             width=NUMBER_PALETTE_BUTTON_SIZE, height=NUMBER_PALETTE_BUTTON_SIZE,
             tooltip="Clear cell", style=ft.ButtonStyle(padding=0)
@@ -236,7 +236,7 @@ def sudoku_offline_logic(page: ft.Page, go_home_fn):
         title_bar = ft.Row(
             [
                 ft.Text("🧩 سودوكو (أوفلاين)", size=FONT_SIZE_TITLE, weight=ft.FontWeight.BOLD, expand=True, text_align=ft.TextAlign.CENTER),
-                ft.IconButton(ft.icons.HOME_ROUNDED, tooltip="العودة للقائمة الرئيسية", on_click=lambda e: go_home_fn(), icon_size=TITLE_ICON_SIZE)
+                ft.IconButton(ft.Icons.HOME_ROUNDED, tooltip="العودة للقائمة الرئيسية", on_click=lambda e: go_home_fn(), icon_size=TITLE_ICON_SIZE)
             ], alignment=ft.MainAxisAlignment.SPACE_BETWEEN, vertical_alignment=ft.CrossAxisAlignment.CENTER
         )
         offline_main_column.controls.append(title_bar)
@@ -478,7 +478,7 @@ def sudoku_online_logic(page: ft.Page, go_home_fn, send_action_fn, room_code: st
         for i in range(1, 10):
             btn = ft.ElevatedButton(str(i), on_click=lambda e, num=i: handle_palette_number_click_online(num), width=NUMBER_PALETTE_BUTTON_SIZE, height=NUMBER_PALETTE_BUTTON_SIZE, style=ft.ButtonStyle(padding=0))
             number_palette_online.controls.append(btn)
-        clear_btn = ft.ElevatedButton(content=ft.Icon(ft.icons.BACKSPACE_OUTLINED, size=NUMBER_PALETTE_BUTTON_SIZE*0.6), on_click=lambda e: handle_palette_number_click_online(0), width=NUMBER_PALETTE_BUTTON_SIZE, height=NUMBER_PALETTE_BUTTON_SIZE, tooltip="Clear cell", style=ft.ButtonStyle(padding=0))
+        clear_btn = ft.ElevatedButton(content=ft.Icon(ft.Icons.BACKSPACE_OUTLINED, size=NUMBER_PALETTE_BUTTON_SIZE*0.6), on_click=lambda e: handle_palette_number_click_online(0), width=NUMBER_PALETTE_BUTTON_SIZE, height=NUMBER_PALETTE_BUTTON_SIZE, tooltip="Clear cell", style=ft.ButtonStyle(padding=0))
         number_palette_online.controls.append(clear_btn)
 
     def client_check_solution_online(e):
@@ -723,7 +723,7 @@ def sudoku_online_logic(page: ft.Page, go_home_fn, send_action_fn, room_code: st
         ft.Row(
             [
                 ft.Text(f"🧩 سودوكو - غرفة: {room_code}", size=FONT_SIZE_TITLE, weight=ft.FontWeight.BOLD, expand=True, text_align=ft.TextAlign.CENTER),
-                ft.IconButton(ft.icons.HOME_ROUNDED, tooltip="العودة للرئيسية", on_click=go_home_fn, icon_size=TITLE_ICON_SIZE)
+                ft.IconButton(ft.Icons.HOME_ROUNDED, tooltip="العودة للرئيسية", on_click=go_home_fn, icon_size=TITLE_ICON_SIZE)
             ], alignment=ft.MainAxisAlignment.SPACE_BETWEEN, vertical_alignment=ft.CrossAxisAlignment.CENTER
         ),
         ft.Divider(height=1, thickness=0.5), status_text_online, ft.Divider(height=3, thickness=1),
