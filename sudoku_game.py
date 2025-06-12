@@ -97,12 +97,16 @@ def sudoku_offline_logic(page: ft.Page, go_home_fn):
                 is_initial = (val != 0)
                 if is_initial:
                     offline_state["initial_cells"].add((r_idx, c_idx))
-                cell_text = ft.Text(str(val) if is_initial else "", size=FONT_SIZE_XLARGE, text_align=ft.TextAlign.CENTER)
+                # Create Text control first
+                cell_text = ft.Text(size=FONT_SIZE_XLARGE, text_align=ft.TextAlign.CENTER)
                 text_controls_offline[r_idx][c_idx] = cell_text
+                # Then create Container and add Text to it
                 cell_container = ft.Container(
-                    content=cell_text, width=SUDOKU_CELL_SIZE, height=SUDOKU_CELL_SIZE,
+                    content=cell_text, # Add text here
+                    width=SUDOKU_CELL_SIZE, height=SUDOKU_CELL_SIZE,
                     alignment=ft.alignment.center, data=(r_idx, c_idx),
                     on_click=lambda e, r=r_idx, c=c_idx: handle_cell_click_offline(r, c),
+                    # Initial border, will be updated by refresh_grid_display_offline
                     border=ft.border.Border(
                         top=ft.border.BorderSide(SUDOKU_GRID_BORDER_THICKNESS_BOLD if r_idx % 3 == 0 else SUDOKU_GRID_BORDER_THICKNESS_NORMAL, DEFAULT_BORDER_COLOR),
                         left=ft.border.BorderSide(SUDOKU_GRID_BORDER_THICKNESS_BOLD if c_idx % 3 == 0 else SUDOKU_GRID_BORDER_THICKNESS_NORMAL, DEFAULT_BORDER_COLOR),
@@ -114,7 +118,7 @@ def sudoku_offline_logic(page: ft.Page, go_home_fn):
             grid_rows.append(ft.Row(row_controls, spacing=0, alignment=ft.MainAxisAlignment.CENTER))
         sudoku_grid_container_offline.controls.extend(grid_rows)
         sudoku_grid_container_offline.visible = True
-        refresh_grid_display_offline()
+        # DO NOT call refresh_grid_display_offline() here. Let the caller do it.
 
     def refresh_grid_display_offline():
         user_board = offline_state["user_board"]
@@ -130,7 +134,6 @@ def sudoku_offline_logic(page: ft.Page, go_home_fn):
                 is_conflicting_for_cell = show_conflicts and (r,c) in conflicts_to_show
                 current_value_to_display = offline_state["solution_board"][r][c] if is_solution_shown_state else user_board[r][c]
                 update_cell_display_offline(r, c, current_value_to_display, is_initial, is_selected, is_conflicting_for_cell, is_solution_shown_state)
-        # REMOVED: if page.client_storage: page.update()
 
     def handle_cell_click_offline(r_clicked, c_clicked):
         if (r_clicked, c_clicked) in offline_state["initial_cells"] or \
@@ -145,10 +148,8 @@ def sudoku_offline_logic(page: ft.Page, go_home_fn):
                 offline_state["selected_cell_coord"] = (r_clicked, c_clicked)
                 number_palette_offline.visible = True
         
-        refresh_grid_display_offline() # This no longer calls page.update()
-        
+        refresh_grid_display_offline() 
         if page.client_storage:
-            # Update the whole page to reflect grid selection and palette visibility.
             page.update()
 
     def handle_palette_number_click_offline(num_clicked):
@@ -162,15 +163,12 @@ def sudoku_offline_logic(page: ft.Page, go_home_fn):
                 offline_state["conflicting_cells"] = new_conflicts
             else:
                 offline_state["conflicting_cells"] = set()
-            
-            refresh_grid_display_offline() # This no longer calls page.update()
-            
+            refresh_grid_display_offline() 
             if page.client_storage:
-                page.update() # Update the page to reflect changes on the grid
+                page.update()
 
     def create_number_palette_offline():
         number_palette_offline.controls.clear()
-
         row1_controls = []
         for i in range(1, 6):
             btn = ft.ElevatedButton(
@@ -179,7 +177,6 @@ def sudoku_offline_logic(page: ft.Page, go_home_fn):
                 style=ft.ButtonStyle(padding=0)
             )
             row1_controls.append(btn)
-
         row2_controls = []
         for i in range(6, 10):
             btn = ft.ElevatedButton(
@@ -188,7 +185,6 @@ def sudoku_offline_logic(page: ft.Page, go_home_fn):
                 style=ft.ButtonStyle(padding=0)
             )
             row2_controls.append(btn)
-
         clear_btn = ft.ElevatedButton(
             content=ft.Icon(ft.Icons.BACKSPACE_OUTLINED, size=NUMBER_PALETTE_BUTTON_SIZE*0.6),
             on_click=lambda e: handle_palette_number_click_offline(0),
@@ -196,10 +192,8 @@ def sudoku_offline_logic(page: ft.Page, go_home_fn):
             tooltip="Clear cell", style=ft.ButtonStyle(padding=0)
         )
         row2_controls.append(clear_btn)
-
         row1 = ft.Row(controls=row1_controls, alignment=ft.MainAxisAlignment.CENTER, spacing=5)
         row2 = ft.Row(controls=row2_controls, alignment=ft.MainAxisAlignment.CENTER, spacing=5)
-
         number_palette_offline.controls.extend([row1, row2])
 
     def start_new_offline_game(difficulty):
@@ -222,26 +216,21 @@ def sudoku_offline_logic(page: ft.Page, go_home_fn):
         user_board = offline_state["user_board"]
         solution = offline_state["solution_board"]
         is_correct, conflicts_from_check = check_solution_correctness(user_board, solution)
-        
-        if offline_state["difficulty"] == "easy": # Update conflicts regardless of correctness for 'easy'
+        if offline_state["difficulty"] == "easy":
             offline_state["conflicting_cells"] = conflicts_from_check
         else:
             offline_state["conflicting_cells"] = set()
-
         if is_correct:
             offline_state["step"] = "game_over"
             status_text_offline.value = "🎉 رائع! لقد حللت لغز السودوكو بنجاح!"
             offline_state["selected_cell_coord"] = None
-            # Visibility of number_palette_offline handled by update_offline_ui_layout
         elif not is_board_full(user_board):
             status_text_offline.value = "⚠️ اللغز لم يكتمل. أكمل ملء الخانات!"
         else:
-            if offline_state["difficulty"] == "easy" and offline_state["conflicting_cells"]: # Check after updating conflicts
+            if offline_state["difficulty"] == "easy" and offline_state["conflicting_cells"]:
                 status_text_offline.value = "⚠️ هناك أخطاء في الحل. الخلايا المخالفة محددة."
             else:
                 status_text_offline.value = "⚠️ الحل الذي أدخلته غير صحيح."
-        
-        # update_offline_ui_layout will call refresh_grid_display_offline and page.update()
         update_offline_ui_layout()
 
     def show_solution_offline(e):
@@ -250,7 +239,6 @@ def sudoku_offline_logic(page: ft.Page, go_home_fn):
             status_text_offline.value = "💡 هذا هو الحل الصحيح!"
             offline_state["selected_cell_coord"] = None
             offline_state["conflicting_cells"] = set()
-            # Visibility of number_palette_offline and grid refresh handled by update_offline_ui_layout
             update_offline_ui_layout()
 
     def update_offline_ui_layout():
@@ -275,21 +263,15 @@ def sudoku_offline_logic(page: ft.Page, go_home_fn):
                 ft.ElevatedButton("صعب", on_click=lambda e: start_new_offline_game("hard"), width=200, height=BUTTON_HEIGHT_NORMAL),
             ])
         elif offline_state["step"] == "playing":
-            if not offline_state["user_board"]:
-                create_sudoku_grid_ui_offline() # This calls refresh_grid_display_offline (which doesn't page.update())
-            else:
-                sudoku_grid_container_offline.visible = True
-                if not sudoku_grid_container_offline.controls:
-                    create_sudoku_grid_ui_offline()
-                else:
-                    refresh_grid_display_offline() # Doesn't page.update()
-            
+            if not offline_state["user_board"] or not sudoku_grid_container_offline.controls:
+                create_sudoku_grid_ui_offline() 
+            # Grid structure is now built. Refresh its display based on current state.
+            refresh_grid_display_offline()
+            sudoku_grid_container_offline.visible = True # Ensure visible
+
             if not number_palette_offline.controls:
                 create_number_palette_offline()
-            # Visibility of number_palette_offline is handled by handle_cell_click_offline,
-            # which now calls page.update() itself.
-            # Here we just ensure it's part of the layout.
-            # Its visibility state is managed by handle_cell_click_offline.
+            # Visibility of number_palette_offline is updated by handle_cell_click_offline
             
             offline_action_area.controls.append(
                 ft.ElevatedButton("✅ تحقق من الحل", on_click=check_solution_offline, width=200, height=BUTTON_HEIGHT_NORMAL)
@@ -301,22 +283,26 @@ def sudoku_offline_logic(page: ft.Page, go_home_fn):
                 ft.ElevatedButton("🔄 لعبة جديدة (مستوى آخر)", on_click=lambda e: reset_to_difficulty_select(), width=250, height=BUTTON_HEIGHT_NORMAL)
             )
         elif offline_state["step"] == "game_over":
+            if not sudoku_grid_container_offline.controls and offline_state["user_board"]: # Ensure grid is built if game was played
+                create_sudoku_grid_ui_offline()
+            refresh_grid_display_offline() 
             sudoku_grid_container_offline.visible = True
-            number_palette_offline.visible = False # Explicitly set for game_over state
-            refresh_grid_display_offline() # Doesn't page.update()
+            number_palette_offline.visible = False 
             offline_action_area.controls.append(
                 ft.ElevatedButton("🎉 العب مرة أخرى؟", on_click=lambda e: reset_to_difficulty_select(), width=200, height=BUTTON_HEIGHT_NORMAL)
             )
         elif offline_state["step"] == "solution_shown":
+            if not sudoku_grid_container_offline.controls and offline_state["user_board"]: # Ensure grid is built
+                create_sudoku_grid_ui_offline()
+            refresh_grid_display_offline() 
             sudoku_grid_container_offline.visible = True
-            number_palette_offline.visible = False # Explicitly set for solution_shown state
-            refresh_grid_display_offline() # Doesn't page.update()
+            number_palette_offline.visible = False
             offline_action_area.controls.append(
                 ft.ElevatedButton("🔄 ابدأ لعبة جديدة", on_click=lambda e: reset_to_difficulty_select(), width=200, height=BUTTON_HEIGHT_NORMAL)
             )
 
         offline_main_column.controls.append(sudoku_grid_container_offline)
-        offline_main_column.controls.append(number_palette_offline) # Add to layout, visibility managed elsewhere or here
+        offline_main_column.controls.append(number_palette_offline)
         offline_main_column.controls.append(offline_action_area)
         
         if page.client_storage: page.update()
@@ -377,7 +363,7 @@ def sudoku_online_logic(page: ft.Page, go_home_fn, send_action_fn, room_code: st
 
     def update_cell_display_online(r, c, value_to_display, is_initial, is_selected, is_conflicting, is_solution_shown=False):
         cell_text_control = text_controls_online[r][c]
-        if cell_text_control:
+        if cell_text_control: # Check if control exists
             cell_text_control.value = str(value_to_display) if value_to_display != 0 else ""
 
             if is_initial:
@@ -393,7 +379,7 @@ def sudoku_online_logic(page: ft.Page, go_home_fn, send_action_fn, room_code: st
                 cell_text_control.color = ONLINE_USER_ENTERED_COLOR
 
             cell_container = cell_text_control.parent
-            if cell_container:
+            if cell_container: # Check if parent container exists
                 if is_selected and not online_state.get("is_game_over_globally") and not is_solution_shown:
                     cell_container.bgcolor = ONLINE_SELECTED_CELL_BG_COLOR
                 elif is_initial:
@@ -425,13 +411,19 @@ def sudoku_online_logic(page: ft.Page, go_home_fn, send_action_fn, room_code: st
                 is_initial = (val != 0)
                 if is_initial:
                     online_state["initial_cells"].add((r_idx, c_idx))
-                cell_text = ft.Text(str(val) if is_initial else "", size=FONT_SIZE_XLARGE, text_align=ft.TextAlign.CENTER)
-                text_controls_online[r_idx][c_idx] = cell_text
+                
+                # Create Text control first
+                cell_text = ft.Text(size=FONT_SIZE_XLARGE, text_align=ft.TextAlign.CENTER)
+                text_controls_online[r_idx][c_idx] = cell_text # Store reference
+
+                # Then create Container and add Text to it
                 cell_container = ft.Container(
-                    content=cell_text, width=SUDOKU_CELL_SIZE, height=SUDOKU_CELL_SIZE,
+                    content=cell_text, # Add the created text control here
+                    width=SUDOKU_CELL_SIZE, height=SUDOKU_CELL_SIZE,
                     alignment=ft.alignment.center, data=(r_idx, c_idx),
                     on_click=lambda e, r=r_idx, c=c_idx: handle_cell_click_online(r, c),
-                    border=ft.border.Border(
+                    # Initial border, will be updated by refresh_grid_display_online
+                    border=ft.border.Border( 
                         top=ft.border.BorderSide(SUDOKU_GRID_BORDER_THICKNESS_BOLD if r_idx % 3 == 0 else SUDOKU_GRID_BORDER_THICKNESS_NORMAL, ONLINE_DEFAULT_BORDER_COLOR),
                         left=ft.border.BorderSide(SUDOKU_GRID_BORDER_THICKNESS_BOLD if c_idx % 3 == 0 else SUDOKU_GRID_BORDER_THICKNESS_NORMAL, ONLINE_DEFAULT_BORDER_COLOR),
                         right=ft.border.BorderSide(SUDOKU_GRID_BORDER_THICKNESS_BOLD if c_idx == 8 else (SUDOKU_GRID_BORDER_THICKNESS_NORMAL if c_idx % 3 != 2 else SUDOKU_GRID_BORDER_THICKNESS_BOLD), ONLINE_DEFAULT_BORDER_COLOR),
@@ -440,9 +432,10 @@ def sudoku_online_logic(page: ft.Page, go_home_fn, send_action_fn, room_code: st
                 )
                 row_controls.append(cell_container)
             grid_rows.append(ft.Row(row_controls, spacing=0, alignment=ft.MainAxisAlignment.CENTER))
+        
         sudoku_grid_container_online.controls.extend(grid_rows)
         sudoku_grid_container_online.visible = True
-        refresh_grid_display_online() # Doesn't call page.update()
+        # DO NOT call refresh_grid_display_online() here. Let the caller (update_ui_from_server_state_online_sudoku) do it.
 
     def refresh_grid_display_online():
         if not online_state["user_board"]: return
@@ -459,7 +452,6 @@ def sudoku_online_logic(page: ft.Page, go_home_fn, send_action_fn, room_code: st
                 is_conflicting_for_cell = show_conflicts and (r,c) in conflicts_to_show
                 current_value_to_display = online_state["solution_board_from_server"][r][c] if is_solution_shown_locally and online_state["solution_board_from_server"] else online_state["user_board"][r][c]
                 update_cell_display_online(r, c, current_value_to_display, is_initial, is_selected, is_conflicting_for_cell, is_solution_shown_locally)
-        # REMOVED: if page.client_storage: page.update()
 
     def handle_cell_click_online(r_clicked, c_clicked):
         if (r_clicked, c_clicked) in online_state["initial_cells"] or \
@@ -475,10 +467,8 @@ def sudoku_online_logic(page: ft.Page, go_home_fn, send_action_fn, room_code: st
                 online_state["selected_cell_coord"] = (r_clicked, c_clicked)
                 number_palette_online.visible = True
         
-        refresh_grid_display_online() # This no longer calls page.update()
-        
+        refresh_grid_display_online() 
         if page.client_storage:
-            # Update the whole page to reflect grid selection and palette visibility.
             page.update()
 
     def handle_palette_number_click_online(num_clicked):
@@ -495,35 +485,37 @@ def sudoku_online_logic(page: ft.Page, go_home_fn, send_action_fn, room_code: st
             else:
                 online_state["conflicting_cells"] = set()
 
-            refresh_grid_display_online() # Doesn't call page.update()
+            # Refresh display first (updates control properties in memory)
+            refresh_grid_display_online()
             
-            # The UI update related to the board change will be handled by update_ui_from_server_state_online_sudoku
-            # if this action also triggers a server state update.
-            # However, for immediate local feedback (like conflict highlighting), we might need an update.
-            # The current structure calls update_ui_from_server_state_online_sudoku, which handles page.update().
+            # Then, call the main UI orchestrator which will call page.update()
+            # This ensures that all state changes from this click (board, conflicts)
+            # are reflected before the single page.update() in update_ui_from_server_state_online_sudoku.
             if page.client_storage:
                 current_room_state = game_rooms_ref.get(room_code, {})
-                update_ui_from_server_state_online_sudoku(current_room_state) # This will call page.update()
+                # update_ui_from_server_state_online_sudoku will be called, which calls page.update()
+                # For direct feedback on the grid from palette click, this might be too indirect.
+                # Let's see if the existing structure with update_ui_from_server_state_online_sudoku calling page.update() is enough.
+                # If not, a direct page.update() here might be needed *after* refresh_grid_display_online()
+                # and before or instead of update_ui_from_server_state_online_sudoku if that's too heavy.
+                # For now, relying on update_ui_from_server_state_online_sudoku from the original code.
+                update_ui_from_server_state_online_sudoku(current_room_state)
+
 
     def create_number_palette_online():
         number_palette_online.controls.clear()
-
         row1_controls = []
         for i in range(1, 6):
             btn = ft.ElevatedButton(str(i), on_click=lambda e, num=i: handle_palette_number_click_online(num), width=NUMBER_PALETTE_BUTTON_SIZE, height=NUMBER_PALETTE_BUTTON_SIZE, style=ft.ButtonStyle(padding=0))
             row1_controls.append(btn)
-
         row2_controls = []
         for i in range(6, 10):
             btn = ft.ElevatedButton(str(i), on_click=lambda e, num=i: handle_palette_number_click_online(num), width=NUMBER_PALETTE_BUTTON_SIZE, height=NUMBER_PALETTE_BUTTON_SIZE, style=ft.ButtonStyle(padding=0))
             row2_controls.append(btn)
-
         clear_btn = ft.ElevatedButton(content=ft.Icon(ft.Icons.BACKSPACE_OUTLINED, size=NUMBER_PALETTE_BUTTON_SIZE*0.6), on_click=lambda e: handle_palette_number_click_online(0), width=NUMBER_PALETTE_BUTTON_SIZE, height=NUMBER_PALETTE_BUTTON_SIZE, tooltip="Clear cell", style=ft.ButtonStyle(padding=0))
         row2_controls.append(clear_btn)
-
         row1 = ft.Row(controls=row1_controls, alignment=ft.MainAxisAlignment.CENTER, spacing=5)
         row2 = ft.Row(controls=row2_controls, alignment=ft.MainAxisAlignment.CENTER, spacing=5)
-
         number_palette_online.controls.extend([row1, row2])
 
     def client_check_solution_online(e):
@@ -531,12 +523,10 @@ def sudoku_online_logic(page: ft.Page, go_home_fn, send_action_fn, room_code: st
         if not page.client_storage:
             print("[DEBUG] page.client_storage not available")
             return
-
         if online_state["user_board"]:
             print("[DEBUG] Current board state:")
-            for i, row in enumerate(online_state["user_board"]):
-                print(f"[DEBUG] Row {i+1}: {row}")
-
+            for i, row_val in enumerate(online_state["user_board"]):
+                print(f"[DEBUG] Row {i+1}: {row_val}")
         if not online_state["user_board"] or online_state.get("is_game_over_globally") or online_state["local_game_step"] == "solution_shown":
             print("[DEBUG] Validation skipped - invalid state")
             return
@@ -544,16 +534,13 @@ def sudoku_online_logic(page: ft.Page, go_home_fn, send_action_fn, room_code: st
         snack_message = ""
         snack_bgcolor = None
         temp_client_solution_check_passed = False
-
         solution_board = online_state["solution_board_from_server"]
         print(f"[DEBUG] Solution board available: {bool(solution_board)}")
 
         if not solution_board:
             snack_message = "بيانات الحل غير متوفرة للتحقق المحلي."
-            temp_client_solution_check_passed = False
         elif not is_board_full(online_state["user_board"]):
             snack_message = "⚠️ اللغز لم يكتمل. أكمل ملء الخانات!"
-            temp_client_solution_check_passed = False
         else:
             is_correct_locally, _ = check_solution_correctness(online_state["user_board"], solution_board)
             print(f"[DEBUG] Local validation result: {'Correct' if is_correct_locally else 'Incorrect'}")
@@ -564,31 +551,22 @@ def sudoku_online_logic(page: ft.Page, go_home_fn, send_action_fn, room_code: st
             else:
                 snack_message = "⚠️ الحل الذي أدخلته غير صحيح محلياً. راجعه."
                 snack_bgcolor = ft.Colors.RED_ACCENT_100
-                temp_client_solution_check_passed = False
-
         online_state["client_solution_check_passed"] = temp_client_solution_check_passed
         print(f"[DEBUG] Validation state updated: {temp_client_solution_check_passed}")
 
-        if snack_message and page.client_storage: # Check page.client_storage before accessing page.overlay
+        if snack_message and page.client_storage:
             snackbar = ft.SnackBar(
                 content=ft.Text(snack_message, text_align=ft.TextAlign.CENTER),
-                bgcolor=snack_bgcolor,
-                duration=5000
+                bgcolor=snack_bgcolor, duration=5000
             )
-            snackbar.open = True # This should trigger its own update if attached to page.overlay
-            page.overlay.append(snackbar) # Make sure snackbar is on the page
+            page.overlay.append(snackbar) # Add to overlay
+            snackbar.open = True # Then open it
             print(f"[DEBUG] Showing snackbar: {snack_message}")
+            # page.update() # An update will be called by update_ui_from_server_state_online_sudoku
 
         print("[DEBUG] Updating UI from server state after client check")
         current_room_state = game_rooms_ref.get(room_code, {})
-        update_ui_from_server_state_online_sudoku(current_room_state) # This calls page.update()
-
-        # The page.update() inside update_ui_from_server_state_online_sudoku should handle snackbar display
-        # if it's correctly added to page.overlay before that call.
-        # If snackbar doesn't show, an explicit page.update() here might be needed, but try without first.
-        # if page.client_storage:
-        #    page.update() 
-        #    print("[DEBUG] Page updated after snackbar and UI update from server state")
+        update_ui_from_server_state_online_sudoku(current_room_state)
 
 
     def submit_solution_to_server_online(e):
@@ -598,30 +576,29 @@ def sudoku_online_logic(page: ft.Page, go_home_fn, send_action_fn, room_code: st
            not online_state["client_solution_check_passed"]:
             if page.client_storage and not online_state["client_solution_check_passed"]:
                  page.snack_bar = ft.SnackBar(ft.Text("الرجاء الضغط على 'تحقق من حلي' أولاً والتأكد أنه صحيح محلياً."), open=True)
-                 page.update() # For snackbar
+                 page.update() 
             return
         send_action_fn("SUBMIT_SUDOKU_SOLUTION", {"board": online_state["user_board"]})
         online_state["client_solution_check_passed"] = False
         if page.client_storage: 
-            update_ui_from_server_state_online_sudoku(game_rooms_ref.get(room_code, {})) # This calls page.update()
+            update_ui_from_server_state_online_sudoku(game_rooms_ref.get(room_code, {}))
 
     def show_solution_online_client_side(e):
         if online_state["local_game_step"] == "playing" and online_state["solution_board_from_server"] and not online_state.get("is_game_over_globally"):
             online_state["local_game_step"] = "solution_shown"
             if page.client_storage:
                 page.snack_bar = ft.SnackBar(ft.Text("💡 تم عرض الحل لك. لا يمكنك الإرسال الآن."), open=True)
-                # page.update() here might be good for the snackbar if not handled by open=True and the main update below
             online_state["selected_cell_coord"] = None
-            number_palette_online.visible = False # This state change will be reflected by update_ui
-            refresh_grid_display_online() # Doesn't call page.update()
+            number_palette_online.visible = False 
+            refresh_grid_display_online() 
             if page.client_storage: 
-                update_ui_from_server_state_online_sudoku(game_rooms_ref.get(room_code, {})) # This calls page.update()
+                update_ui_from_server_state_online_sudoku(game_rooms_ref.get(room_code, {}))
         elif not online_state["solution_board_from_server"] and page.client_storage:
             page.snack_bar = ft.SnackBar(ft.Text("بيانات الحل غير متوفرة لعرضها."), open=True)
-            page.update() # For snackbar
+            page.update()
 
     def update_ui_from_server_state_online_sudoku(room_state_from_server):
-        if not page.client_storage: return # Early exit if page is not valid
+        if not page.client_storage: return 
 
         gs = room_state_from_server.get("game_state", {})
         players_in_room = room_state_from_server.get("players", {})
@@ -647,9 +624,9 @@ def sudoku_online_logic(page: ft.Page, go_home_fn, send_action_fn, room_code: st
             online_state["local_game_step"] = "playing"
             online_state["client_solution_check_passed"] = False
             sudoku_grid_container_online.visible = False
-            sudoku_grid_container_online.controls.clear() # Clear old grid
+            sudoku_grid_container_online.controls.clear() 
             number_palette_online.visible = False
-            number_palette_online.controls.clear() # Clear old palette
+            number_palette_online.controls.clear() 
             online_state["user_board"] = None
             online_state["puzzle_board_from_server"] = None
             online_state["solution_board_from_server"] = None
@@ -665,28 +642,30 @@ def sudoku_online_logic(page: ft.Page, go_home_fn, send_action_fn, room_code: st
 
         elif current_phase == "PLAYING":
             puzzle_board = gs.get("puzzle_board")
-            if puzzle_board and (not online_state["puzzle_board_from_server"] or online_state["puzzle_board_from_server"] != puzzle_board or not sudoku_grid_container_online.controls) :
+            grid_needs_creation = not online_state["puzzle_board_from_server"] or \
+                                  online_state["puzzle_board_from_server"] != puzzle_board or \
+                                  not sudoku_grid_container_online.controls
+            
+            if puzzle_board and grid_needs_creation:
                  online_state["local_game_step"] = "playing"
                  online_state["client_solution_check_passed"] = False
-                 create_sudoku_grid_ui_online(puzzle_board) # Calls refresh (no update)
-            elif puzzle_board and sudoku_grid_container_online.visible: # Grid exists, just refresh
-                 refresh_grid_display_online() # No update
-            elif puzzle_board: # Should be caught by first condition if grid needs creation
-                online_state["local_game_step"] = "playing"
-                online_state["client_solution_check_passed"] = False
-                create_sudoku_grid_ui_online(puzzle_board) # Calls refresh (no update)
+                 create_sudoku_grid_ui_online(puzzle_board) # Builds structure
+            
+            # Always refresh display properties if in PLAYING phase and grid exists or was just created
+            if puzzle_board and sudoku_grid_container_online.controls:
+                 refresh_grid_display_online() 
+                 sudoku_grid_container_online.visible = True
+
 
             if not number_palette_online.controls: create_number_palette_online()
-            # Visibility of number_palette_online is handled by handle_cell_click_online or here if game over
-
+            
             can_interact_client = not online_state.get("is_game_over_globally") and online_state["local_game_step"] == "playing"
             
-            # Palette visibility if game is playing
             if online_state.get("selected_cell_coord") and can_interact_client:
                 number_palette_online.visible = True
-            elif not can_interact_client: # e.g. game over or solution shown locally
+            elif not can_interact_client: 
                 number_palette_online.visible = False
-            # else: keep current visibility if no cell selected but game is on.
+            # If no cell selected and game playing, palette visibility remains as is (likely false from deselect)
 
             action_area_online.controls.append(
                 ft.ElevatedButton("🤔 تحقق من حلي", on_click=client_check_solution_online, width=200, height=BUTTON_HEIGHT_NORMAL,
@@ -707,25 +686,30 @@ def sudoku_online_logic(page: ft.Page, go_home_fn, send_action_fn, room_code: st
             action_area_online.controls.append(ft.Text(f"مستوى الصعوبة: {difficulty_display}", size=FONT_SIZE_MEDIUM))
 
         elif current_phase == "GAME_OVER":
-            sudoku_grid_container_online.visible = True
-            number_palette_online.visible = False # Explicitly hide palette
-            online_state["selected_cell_coord"] = None # Deselect cells
+            if not sudoku_grid_container_online.controls and (online_state["user_board"] or gs.get("puzzle_board")):
+                # Ensure grid is built if it wasn't (e.g., if player joined during game over)
+                board_to_display = online_state["user_board"] if online_state["user_board"] else gs.get("puzzle_board")
+                if board_to_display:
+                    create_sudoku_grid_ui_online(board_to_display)
 
-            if online_state["user_board"]: # User board might not be the solution if they didn't win
-                refresh_grid_display_online() # No update
-            elif gs.get("puzzle_board"): # Fallback to puzzle if user_board is not set
-                 create_sudoku_grid_ui_online(gs.get("puzzle_board")) # Calls refresh (no update)
-                 # refresh_grid_display_online() # create_sudoku_grid_ui_online already calls refresh
-            else:
+            if sudoku_grid_container_online.controls: # Only refresh if grid exists
+                refresh_grid_display_online() 
+                sudoku_grid_container_online.visible = True
+            else: # Should not happen if board_to_display was valid
+                sudoku_grid_container_online.visible = False
                 sudoku_grid_container_online.controls.clear()
                 sudoku_grid_container_online.controls.append(ft.Text("انتهت اللعبة.", text_align=ft.TextAlign.CENTER))
+
+
+            number_palette_online.visible = False 
+            online_state["selected_cell_coord"] = None 
 
             winner_name = gs.get("winner", "غير معروف")
             action_area_online.controls.append(ft.Text(f"🏆 الفائز: {winner_name}", size=FONT_SIZE_XLARGE, weight=ft.FontWeight.BOLD, color=ft.Colors.AMBER_700))
             if is_host:
                 action_area_online.controls.append(ft.ElevatedButton("🔄 العب مرة أخرى؟", on_click=lambda e: send_action_fn("RESTART_SUDOKU_GAME"), width=200, height=BUTTON_HEIGHT_NORMAL))
 
-        page.update() # Single update at the end of UI orchestration
+        page.update()
 
     def on_server_message_online_sudoku(*args_received):
         if not page.client_storage: return
@@ -734,10 +718,8 @@ def sudoku_online_logic(page: ft.Page, go_home_fn, send_action_fn, room_code: st
         if not isinstance(msg_data, dict): return
         msg_type = msg_data.get("type")
 
-        # It's generally safer to fetch the latest room state before updating UI
-        # unless the message itself contains the complete new state.
         current_room_full_state = game_rooms_ref.get(room_code, {}) 
-        if not current_room_full_state: return # Room might have been removed
+        if not current_room_full_state: return 
 
         current_gs_from_room = current_room_full_state.get("game_state", {})
 
@@ -745,40 +727,35 @@ def sudoku_online_logic(page: ft.Page, go_home_fn, send_action_fn, room_code: st
             room_state_from_msg = msg_data.get("room_state")
             if room_state_from_msg and isinstance(room_state_from_msg, dict) and room_state_from_msg.get("game_type") == "sudoku":
                 gs_updated = room_state_from_msg.get("game_state",{})
-                if "solution_board" in gs_updated and gs_updated["solution_board"]: # Ensure local state has solution if server sends it
+                if "solution_board" in gs_updated and gs_updated["solution_board"]: 
                      online_state["solution_board_from_server"] = gs_updated["solution_board"]
-                update_ui_from_server_state_online_sudoku(room_state_from_msg) # This calls page.update()
+                update_ui_from_server_state_online_sudoku(room_state_from_msg)
         elif msg_type == "SUDOKU_SUBMISSION_FEEDBACK":
             if msg_data.get("feedback_for_player") == current_player_name:
                 feedback_txt = msg_data.get("feedback_message", "تم استلام الرد.")
-                if page.client_storage: # Check client_storage before accessing page.snack_bar
+                if page.client_storage: 
                     page.snack_bar = ft.SnackBar(ft.Text(feedback_txt, text_align=ft.TextAlign.CENTER), open=True)
-                    page.update() # Explicit update for snackbar, as update_ui might not be called or might be too late
+                    page.update() 
 
-                # If feedback implies game over, ensure UI reflects it.
-                # The GAME_STATE_UPDATE should handle this, but as a fallback:
                 if "كان الأسرع" in feedback_txt or \
                    (current_gs_from_room.get("phase") == "GAME_OVER" and "فاز باللعبة" in current_gs_from_room.get("status_message","")):
-                    online_state["is_game_over_globally"] = True # Update local flag
-                    if page.client_storage: # Re-fetch and update UI if game is over
-                        update_ui_from_server_state_online_sudoku(game_rooms_ref.get(room_code, {})) # Calls page.update()
-        elif msg_type == "SUDOKU_SOLUTION_UPDATE": # Server sends solution board, e.g., at game start
+                    online_state["is_game_over_globally"] = True 
+                    if page.client_storage: 
+                        update_ui_from_server_state_online_sudoku(game_rooms_ref.get(room_code, {})) 
+        elif msg_type == "SUDOKU_SOLUTION_UPDATE": 
             solution_board = msg_data.get("solution_board")
             if solution_board:
                 online_state["solution_board_from_server"] = solution_board
-                # No immediate UI update needed unless this implies game start or other change.
-                # The next GAME_STATE_UPDATE or user action will refresh.
-                # Or, if this IS the trigger for game start, then update:
-                update_ui_from_server_state_online_sudoku(game_rooms_ref.get(room_code, {})) # Calls page.update()
+                update_ui_from_server_state_online_sudoku(game_rooms_ref.get(room_code, {})) 
 
 
         elif msg_type in ["PLAYER_JOINED", "PLAYER_LEFT"]:
-             room_state_from_msg = msg_data.get("room_state") # Assume PLAYER_JOINED/LEFT provides full room_state
+             room_state_from_msg = msg_data.get("room_state") 
              if room_state_from_msg and isinstance(room_state_from_msg, dict) and room_state_from_msg.get("game_type") == "sudoku":
                 gs_updated = room_state_from_msg.get("game_state",{})
                 if "solution_board" in gs_updated and gs_updated["solution_board"]:
                      online_state["solution_board_from_server"] = gs_updated["solution_board"]
-                update_ui_from_server_state_online_sudoku(room_state_from_msg) # Calls page.update()
+                update_ui_from_server_state_online_sudoku(room_state_from_msg) 
 
     page.pubsub.subscribe_topic(f"room_{room_code}", on_server_message_online_sudoku)
 
@@ -817,7 +794,7 @@ def sudoku_online_logic(page: ft.Page, go_home_fn, send_action_fn, room_code: st
         gs_initial = initial_room_data.get("game_state", {})
         if "solution_board" in gs_initial and gs_initial["solution_board"]:
             online_state["solution_board_from_server"] = gs_initial["solution_board"]
-        update_ui_from_server_state_online_sudoku(initial_room_data) # Calls page.update()
+        update_ui_from_server_state_online_sudoku(initial_room_data) 
     else:
         status_text_online.value = "خطأ في الاتصال بالغرفة."
         if page.client_storage: page.update()
