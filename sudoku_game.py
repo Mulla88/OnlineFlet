@@ -5,7 +5,20 @@ import threading # <--- IMPORT THREADING
 from sudoku_utils import get_sudoku_puzzle, check_solution_correctness, copy_board, validate_board_rules_and_get_conflicts, is_board_full
 
 # --- Sizing Constants ---
-# ... (no changes) ...
+FONT_SIZE_NORMAL = 14
+FONT_SIZE_MEDIUM = 16
+FONT_SIZE_LARGE = 18
+FONT_SIZE_XLARGE = 20 # For cell numbers
+FONT_SIZE_TITLE = 22
+BUTTON_HEIGHT_NORMAL = 40
+CONTAINER_PADDING_NORMAL = ft.padding.symmetric(horizontal=5, vertical=3)
+STANDARD_BORDER_RADIUS = 8
+TITLE_ICON_SIZE = 26
+SUDOKU_CELL_SIZE = 38
+SUDOKU_GRID_BORDER_THICKNESS_NORMAL = 1
+SUDOKU_GRID_BORDER_THICKNESS_BOLD = 2.5
+NUMBER_PALETTE_BUTTON_SIZE = 40
+
 
 # --- OFFLINE MODE LOGIC ---
 # ... (no changes to offline logic as it's single-threaded and works) ...
