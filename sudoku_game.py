@@ -29,7 +29,7 @@ def sudoku_offline_logic(page: ft.Page, go_home_fn):
     
     status_text_offline = ft.Text("اختر مستوى الصعوبة.", size=FONT_SIZE_LARGE, text_align=ft.TextAlign.CENTER)
     sudoku_grid_container_offline = ft.Column(spacing=0, horizontal_alignment=ft.CrossAxisAlignment.CENTER, visible=False)
-    number_palette_offline = ft.Row(visible=False, alignment=ft.MainAxisAlignment.CENTER, spacing=5)
+    number_palette_offline = ft.Column(visible=False, horizontal_alignment=ft.CrossAxisAlignment.CENTER, spacing=5)
     offline_action_area = ft.Column(horizontal_alignment=ft.CrossAxisAlignment.CENTER, spacing=10)
     
     offline_main_column = ft.Column(
@@ -162,20 +162,40 @@ def sudoku_offline_logic(page: ft.Page, go_home_fn):
 
     def create_number_palette_offline():
         number_palette_offline.controls.clear()
-        for i in range(1, 10):
+        
+        # Create the first row (buttons 1-5)
+        row1_controls = []
+        for i in range(1, 6):
             btn = ft.ElevatedButton(
                 str(i), on_click=lambda e, num=i: handle_palette_number_click_offline(num),
                 width=NUMBER_PALETTE_BUTTON_SIZE, height=NUMBER_PALETTE_BUTTON_SIZE,
                 style=ft.ButtonStyle(padding=0)
             )
-            number_palette_offline.controls.append(btn)
+            row1_controls.append(btn)
+        
+        # Create the second row (buttons 6-9 and clear)
+        row2_controls = []
+        for i in range(6, 10):
+            btn = ft.ElevatedButton(
+                str(i), on_click=lambda e, num=i: handle_palette_number_click_offline(num),
+                width=NUMBER_PALETTE_BUTTON_SIZE, height=NUMBER_PALETTE_BUTTON_SIZE,
+                style=ft.ButtonStyle(padding=0)
+            )
+            row2_controls.append(btn)
+            
         clear_btn = ft.ElevatedButton(
-            content=ft.Icon(ft.Icons.BACKSPACE_OUTLINED, size=NUMBER_PALETTE_BUTTON_SIZE*0.6),
+            content=ft.Icon(ft.icons.BACKSPACE_OUTLINED, size=NUMBER_PALETTE_BUTTON_SIZE*0.6),
             on_click=lambda e: handle_palette_number_click_offline(0),
             width=NUMBER_PALETTE_BUTTON_SIZE, height=NUMBER_PALETTE_BUTTON_SIZE,
             tooltip="Clear cell", style=ft.ButtonStyle(padding=0)
         )
-        number_palette_offline.controls.append(clear_btn)
+        row2_controls.append(clear_btn)
+        
+        # Add the two rows to the main Column container
+        row1 = ft.Row(controls=row1_controls, alignment=ft.MainAxisAlignment.CENTER, spacing=5)
+        row2 = ft.Row(controls=row2_controls, alignment=ft.MainAxisAlignment.CENTER, spacing=5)
+        
+        number_palette_offline.controls.extend([row1, row2])
 
     def start_new_offline_game(difficulty):
         offline_state["difficulty"] = difficulty 
@@ -327,7 +347,7 @@ def sudoku_online_logic(page: ft.Page, go_home_fn, send_action_fn, room_code: st
     player_list_display_online = ft.Column(scroll=ft.ScrollMode.ADAPTIVE, spacing=3, horizontal_alignment=ft.CrossAxisAlignment.CENTER)
     action_area_online = ft.Column(horizontal_alignment=ft.CrossAxisAlignment.CENTER, spacing=10, scroll=ft.ScrollMode.ADAPTIVE)
     sudoku_grid_container_online = ft.Column(spacing=0, horizontal_alignment=ft.CrossAxisAlignment.CENTER, visible=False)
-    number_palette_online = ft.Row(visible=False, alignment=ft.MainAxisAlignment.CENTER, spacing=5)
+    number_palette_online = ft.Column(visible=False, horizontal_alignment=ft.CrossAxisAlignment.CENTER, spacing=5)
 
     text_controls_online = [[None for _ in range(9)] for _ in range(9)]
 
@@ -473,13 +493,30 @@ def sudoku_online_logic(page: ft.Page, go_home_fn, send_action_fn, room_code: st
                 current_room_state = game_rooms_ref.get(room_code, {})
                 update_ui_from_server_state_online_sudoku(current_room_state)
 
+# REPLACE WITH THIS NEW FUNCTION
     def create_number_palette_online():
         number_palette_online.controls.clear()
-        for i in range(1, 10):
+
+        # Create the first row (buttons 1-5)
+        row1_controls = []
+        for i in range(1, 6):
             btn = ft.ElevatedButton(str(i), on_click=lambda e, num=i: handle_palette_number_click_online(num), width=NUMBER_PALETTE_BUTTON_SIZE, height=NUMBER_PALETTE_BUTTON_SIZE, style=ft.ButtonStyle(padding=0))
-            number_palette_online.controls.append(btn)
-        clear_btn = ft.ElevatedButton(content=ft.Icon(ft.Icons.BACKSPACE_OUTLINED, size=NUMBER_PALETTE_BUTTON_SIZE*0.6), on_click=lambda e: handle_palette_number_click_online(0), width=NUMBER_PALETTE_BUTTON_SIZE, height=NUMBER_PALETTE_BUTTON_SIZE, tooltip="Clear cell", style=ft.ButtonStyle(padding=0))
-        number_palette_online.controls.append(clear_btn)
+            row1_controls.append(btn)
+        
+        # Create the second row (buttons 6-9 and clear)
+        row2_controls = []
+        for i in range(6, 10):
+            btn = ft.ElevatedButton(str(i), on_click=lambda e, num=i: handle_palette_number_click_online(num), width=NUMBER_PALETTE_BUTTON_SIZE, height=NUMBER_PALETTE_BUTTON_SIZE, style=ft.ButtonStyle(padding=0))
+            row2_controls.append(btn)
+        
+        clear_btn = ft.ElevatedButton(content=ft.Icon(ft.icons.BACKSPACE_OUTLINED, size=NUMBER_PALETTE_BUTTON_SIZE*0.6), on_click=lambda e: handle_palette_number_click_online(0), width=NUMBER_PALETTE_BUTTON_SIZE, height=NUMBER_PALETTE_BUTTON_SIZE, tooltip="Clear cell", style=ft.ButtonStyle(padding=0))
+        row2_controls.append(clear_btn)
+
+        # Add the two rows to the main Column container
+        row1 = ft.Row(controls=row1_controls, alignment=ft.MainAxisAlignment.CENTER, spacing=5)
+        row2 = ft.Row(controls=row2_controls, alignment=ft.MainAxisAlignment.CENTER, spacing=5)
+        
+        number_palette_online.controls.extend([row1, row2])
 
     def client_check_solution_online(e):
         # Debug logging: Button clicked

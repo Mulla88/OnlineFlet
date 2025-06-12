@@ -38,7 +38,7 @@ def process_sudoku_action(page_ref: ft.Page, room_code: str, player_name: str, a
             gs["difficulty"] = difficulty
             gs["winner"] = None
             gs["phase"] = "PLAYING"
-            gs["status_message"] = f"بدأت لعبة سودوكو! مستوى الصعوبة: {difficulty}. أول من يحلها يفوز!"
+            gs["status_message"] = f"أول من يحل السودوكو يفوز"
             send_full_update = True
             
             # Send solution board to clients for local validation
