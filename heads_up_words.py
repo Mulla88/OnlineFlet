@@ -1209,6 +1209,6 @@ HEADS_UP_WORDS = [
     "جسر",            # Bridge
     "نفق",            # Tunnel
     "حقيبة ظهر",      # Backpack
-    "طائرة ورقية"     # Kite
+    "طائرة ورقية" 
 
 ]
