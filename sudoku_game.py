@@ -41,14 +41,14 @@ def sudoku_offline_logic(page: ft.Page, go_home_fn):
 
     text_controls_offline = [[None for _ in range(9)] for _ in range(9)]
 
-    USER_ENTERED_COLOR = ft.colors.ORANGE_ACCENT_700 
-    INITIAL_NUMBER_COLOR = ft.colors.BLACK87
-    CONFLICT_BORDER_COLOR = ft.colors.RED_ACCENT_700
-    DEFAULT_BORDER_COLOR = ft.colors.BLACK54
-    SELECTED_CELL_BG_COLOR = ft.colors.LIGHT_BLUE_ACCENT_100
-    INITIAL_CELL_BG_COLOR = ft.colors.BLUE_GREY_50
-    NORMAL_CELL_BG_COLOR = ft.colors.WHITE
-    SOLUTION_SHOWN_COLOR = ft.colors.GREEN_ACCENT_700
+    USER_ENTERED_COLOR = ft.Colors.ORANGE_ACCENT_700 
+    INITIAL_NUMBER_COLOR = ft.Colors.BLACK87
+    CONFLICT_BORDER_COLOR = ft.Colors.RED_ACCENT_700
+    DEFAULT_BORDER_COLOR = ft.Colors.BLACK54
+    SELECTED_CELL_BG_COLOR = ft.Colors.LIGHT_BLUE_ACCENT_100
+    INITIAL_CELL_BG_COLOR = ft.Colors.BLUE_GREY_50
+    NORMAL_CELL_BG_COLOR = ft.Colors.WHITE
+    SOLUTION_SHOWN_COLOR = ft.Colors.GREEN_ACCENT_700
 
     def update_cell_display_offline(r, c, value_to_display, is_initial, is_selected, is_conflicting, is_solution_shown=False):
         cell_text_control = text_controls_offline[r][c]
@@ -266,7 +266,7 @@ def sudoku_offline_logic(page: ft.Page, go_home_fn):
                 ft.ElevatedButton("✅ تحقق من الحل", on_click=check_solution_offline, width=200, height=BUTTON_HEIGHT_NORMAL)
             )
             offline_action_area.controls.append(
-                ft.ElevatedButton("🏳️ استسلام (أظهر الحل)", on_click=show_solution_offline, width=220, height=BUTTON_HEIGHT_NORMAL, bgcolor=ft.colors.AMBER_200)
+                ft.ElevatedButton("🏳️ استسلام (أظهر الحل)", on_click=show_solution_offline, width=220, height=BUTTON_HEIGHT_NORMAL, bgcolor=ft.Colors.AMBER_200)
             )
             offline_action_area.controls.append(
                 ft.ElevatedButton("🔄 لعبة جديدة (مستوى آخر)", on_click=lambda e: reset_to_difficulty_select(), width=250, height=BUTTON_HEIGHT_NORMAL)
@@ -335,14 +335,14 @@ def sudoku_online_logic(page: ft.Page, go_home_fn, send_action_fn, room_code: st
         expand=True, scroll=ft.ScrollMode.ADAPTIVE, 
         horizontal_alignment=ft.CrossAxisAlignment.CENTER, spacing=6
     )
-    ONLINE_USER_ENTERED_COLOR = ft.colors.DEEP_PURPLE_ACCENT_700 
-    ONLINE_INITIAL_NUMBER_COLOR = ft.colors.BLACK87
-    ONLINE_CONFLICT_BORDER_COLOR = ft.colors.RED_ACCENT_700 # <-- ADDED
-    ONLINE_DEFAULT_BORDER_COLOR = ft.colors.BLACK54
-    ONLINE_SELECTED_CELL_BG_COLOR = ft.colors.LIGHT_GREEN_ACCENT_100
-    ONLINE_INITIAL_CELL_BG_COLOR = ft.colors.BLUE_GREY_50
-    ONLINE_NORMAL_CELL_BG_COLOR = ft.colors.WHITE
-    ONLINE_SOLUTION_SHOWN_COLOR = ft.colors.GREEN_ACCENT_700
+    ONLINE_USER_ENTERED_COLOR = ft.Colors.DEEP_PURPLE_ACCENT_700 
+    ONLINE_INITIAL_NUMBER_COLOR = ft.Colors.BLACK87
+    ONLINE_CONFLICT_BORDER_COLOR = ft.Colors.RED_ACCENT_700 # <-- ADDED
+    ONLINE_DEFAULT_BORDER_COLOR = ft.Colors.BLACK54
+    ONLINE_SELECTED_CELL_BG_COLOR = ft.Colors.LIGHT_GREEN_ACCENT_100
+    ONLINE_INITIAL_CELL_BG_COLOR = ft.Colors.BLUE_GREY_50
+    ONLINE_NORMAL_CELL_BG_COLOR = ft.Colors.WHITE
+    ONLINE_SOLUTION_SHOWN_COLOR = ft.Colors.GREEN_ACCENT_700
 
     # MODIFIED: Added is_conflicting parameter
     def update_cell_display_online(r, c, value_to_display, is_initial, is_selected, is_conflicting, is_solution_shown=False):
@@ -517,11 +517,11 @@ def sudoku_online_logic(page: ft.Page, go_home_fn, send_action_fn, room_code: st
             print(f"[DEBUG] Local validation result: {'Correct' if is_correct_locally else 'Incorrect'}")
             if is_correct_locally:
                 snack_message = "✅ يبدو أن الحل صحيح! يمكنك الآن إرساله للخادم."
-                snack_bgcolor = ft.colors.GREEN_ACCENT_700
+                snack_bgcolor = ft.Colors.GREEN_ACCENT_700
                 temp_client_solution_check_passed = True
             else:
                 snack_message = "⚠️ الحل الذي أدخلته غير صحيح محلياً. راجعه."
-                snack_bgcolor = ft.colors.RED_ACCENT_100
+                snack_bgcolor = ft.Colors.RED_ACCENT_100
                 temp_client_solution_check_passed = False
 
         online_state["client_solution_check_passed"] = temp_client_solution_check_passed
@@ -641,12 +641,12 @@ def sudoku_online_logic(page: ft.Page, go_home_fn, send_action_fn, room_code: st
             action_area_online.controls.append(
                 ft.ElevatedButton("🏁 إرسال الحل للخادم", on_click=submit_solution_to_server_online, width=220, height=BUTTON_HEIGHT_NORMAL,
                                   disabled=not (can_interact_client and online_state["client_solution_check_passed"]),
-                                  bgcolor=ft.colors.GREEN_ACCENT_200 if (can_interact_client and online_state["client_solution_check_passed"]) else None) 
+                                  bgcolor=ft.Colors.GREEN_ACCENT_200 if (can_interact_client and online_state["client_solution_check_passed"]) else None) 
             )
             if online_state["solution_board_from_server"]: 
                 action_area_online.controls.append(
                     ft.ElevatedButton("🏳️ استسلام (أظهر الحل لي)", on_click=show_solution_online_client_side, width=250, height=BUTTON_HEIGHT_NORMAL, 
-                                      bgcolor=ft.colors.AMBER_200, disabled=not can_interact_client)
+                                      bgcolor=ft.Colors.AMBER_200, disabled=not can_interact_client)
                 )
 
             difficulty_display = gs.get("difficulty", "غير محدد")
@@ -667,7 +667,7 @@ def sudoku_online_logic(page: ft.Page, go_home_fn, send_action_fn, room_code: st
                 sudoku_grid_container_online.controls.append(ft.Text("انتهت اللعبة.", text_align=ft.TextAlign.CENTER))
 
             winner_name = gs.get("winner", "غير معروف")
-            action_area_online.controls.append(ft.Text(f"🏆 الفائز: {winner_name}", size=FONT_SIZE_XLARGE, weight=ft.FontWeight.BOLD, color=ft.colors.AMBER_700))
+            action_area_online.controls.append(ft.Text(f"🏆 الفائز: {winner_name}", size=FONT_SIZE_XLARGE, weight=ft.FontWeight.BOLD, color=ft.Colors.AMBER_700))
             if is_host:
                 action_area_online.controls.append(ft.ElevatedButton("🔄 العب مرة أخرى؟", on_click=lambda e: send_action_fn("RESTART_SUDOKU_GAME"), width=200, height=BUTTON_HEIGHT_NORMAL))
         
@@ -731,7 +731,7 @@ def sudoku_online_logic(page: ft.Page, go_home_fn, send_action_fn, room_code: st
             [
                 ft.Container(
                     content=player_list_display_online, padding=8,
-                    border=ft.border.all(1, ft.colors.with_opacity(0.5, ft.colors.OUTLINE)),
+                    border=ft.border.all(1, ft.Colors.with_opacity(0.5, ft.Colors.OUTLINE)),
                     border_radius=STANDARD_BORDER_RADIUS, col={"xs": 12, "md": 4},
                     margin=ft.margin.only(bottom=8 if page.width and page.width < 768 else 0, top=5)
                 ),
