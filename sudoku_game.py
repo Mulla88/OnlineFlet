@@ -4,6 +4,7 @@ import time
 from sudoku_utils import get_sudoku_puzzle, check_solution_correctness, copy_board, validate_board_rules_and_get_conflicts, is_board_full
 
 # --- Sizing Constants ---
+FONT_SIZE_SMALL = 12
 FONT_SIZE_NORMAL = 14
 FONT_SIZE_MEDIUM = 16
 FONT_SIZE_LARGE = 18
@@ -13,7 +14,7 @@ BUTTON_HEIGHT_NORMAL = 40
 CONTAINER_PADDING_NORMAL = ft.padding.symmetric(horizontal=5, vertical=3)
 STANDARD_BORDER_RADIUS = 8
 TITLE_ICON_SIZE = 26
-SUDOKU_CELL_SIZE = 38 
+SUDOKU_CELL_SIZE = 38  # Default, will be adjusted for mobile
 SUDOKU_GRID_BORDER_THICKNESS_NORMAL = 1
 SUDOKU_GRID_BORDER_THICKNESS_BOLD = 2.5 
 NUMBER_PALETTE_BUTTON_SIZE = 40
@@ -344,7 +345,13 @@ def sudoku_online_logic(page: ft.Page, go_home_fn, send_action_fn, room_code: st
     
     status_text_online = ft.Text("...", size=FONT_SIZE_LARGE, weight=ft.FontWeight.BOLD, text_align=ft.TextAlign.CENTER)
     validation_status_online = ft.Text("", size=FONT_SIZE_LARGE, text_align=ft.TextAlign.CENTER, color=ft.Colors.BLACK)
-    player_list_display_online = ft.Column(scroll=ft.ScrollMode.ADAPTIVE, spacing=3, horizontal_alignment=ft.CrossAxisAlignment.CENTER)
+    player_list_display_online = ft.Row(
+        wrap=True,
+        spacing=3,
+        run_spacing=3,
+        alignment=ft.MainAxisAlignment.CENTER,
+        vertical_alignment=ft.CrossAxisAlignment.CENTER
+    )
     action_area_online = ft.Column(horizontal_alignment=ft.CrossAxisAlignment.CENTER, spacing=10, scroll=ft.ScrollMode.ADAPTIVE)
     sudoku_grid_container_online = ft.Column(spacing=0, horizontal_alignment=ft.CrossAxisAlignment.CENTER, visible=False)
     number_palette_online = ft.Row(visible=False, alignment=ft.MainAxisAlignment.CENTER, spacing=5)
@@ -352,7 +359,7 @@ def sudoku_online_logic(page: ft.Page, go_home_fn, send_action_fn, room_code: st
     text_controls_online = [[None for _ in range(9)] for _ in range(9)]
 
     online_main_content_column = ft.Column(
-        expand=True, scroll=ft.ScrollMode.ADAPTIVE, 
+        expand=True, scroll=ft.ScrollMode.HIDDEN,
         horizontal_alignment=ft.CrossAxisAlignment.CENTER, spacing=6
     )
     ONLINE_USER_ENTERED_COLOR = ft.Colors.DEEP_PURPLE_ACCENT_700 
@@ -400,9 +407,18 @@ def sudoku_online_logic(page: ft.Page, go_home_fn, send_action_fn, room_code: st
 
     def create_sudoku_grid_ui_online(puzzle_board_from_server):
         online_state["puzzle_board_from_server"] = copy_board(puzzle_board_from_server)
-        online_state["user_board"] = copy_board(puzzle_board_from_server) 
+        online_state["user_board"] = copy_board(puzzle_board_from_server)
         online_state["initial_cells"].clear()
         online_state["conflicting_cells"] = set()
+        
+        # Calculate dynamic cell size for mobile
+        if page.height:
+            grid_height = page.height * 0.5
+            cell_size = max(25, grid_height // 10)
+            cell_font_size = max(16, cell_size * 0.6)
+        else:
+            cell_size = 30
+            cell_font_size = 18
         
         sudoku_grid_container_online.controls.clear()
         grid_rows = []
@@ -413,10 +429,10 @@ def sudoku_online_logic(page: ft.Page, go_home_fn, send_action_fn, room_code: st
                 is_initial = (val != 0)
                 if is_initial:
                     online_state["initial_cells"].add((r_idx, c_idx))
-                cell_text = ft.Text(str(val) if is_initial else "", size=FONT_SIZE_XLARGE, text_align=ft.TextAlign.CENTER)
+                cell_text = ft.Text(str(val) if is_initial else "", size=cell_font_size, text_align=ft.TextAlign.CENTER)
                 text_controls_online[r_idx][c_idx] = cell_text
                 cell_container = ft.Container(
-                    content=cell_text, width=SUDOKU_CELL_SIZE, height=SUDOKU_CELL_SIZE,
+                    content=cell_text, width=cell_size, height=cell_size,
                     alignment=ft.alignment.center, data=(r_idx, c_idx),
                     on_click=lambda e, r=r_idx, c=c_idx: handle_cell_click_online(r, c),
                     border=ft.border.Border(
@@ -574,12 +590,12 @@ def sudoku_online_logic(page: ft.Page, go_home_fn, send_action_fn, room_code: st
         if "solution_board" in gs and gs["solution_board"]: 
             online_state["solution_board_from_server"] = gs["solution_board"]
 
-        player_list_display_online.controls.clear()
-        player_list_display_online.controls.append(ft.Text(f"اللاعبون ({len(players_in_room)}):", weight=ft.FontWeight.BOLD, text_align=ft.TextAlign.CENTER, size=FONT_SIZE_MEDIUM))
-        for p_name_iter, p_data_iter in players_in_room.items():
-            player_list_display_online.controls.append(
-                ft.Text(f"• {p_data_iter.get('name','Unknown')} {'👑' if p_data_iter.get('is_host') else ''}", text_align=ft.TextAlign.CENTER, size=FONT_SIZE_NORMAL)
-            )
+        player_list_display_online.controls = [
+            ft.Text("اللاعبون:", weight=ft.FontWeight.BOLD, size=FONT_SIZE_SMALL),
+            *[ft.Text(f"{p_data.get('name','Unknown')}{'👑' if p_data.get('is_host') else ''}",
+                      size=FONT_SIZE_SMALL)
+              for p_data in players_in_room.values()]
+        ]
 
         action_area_online.controls.clear()
         
@@ -717,7 +733,7 @@ def sudoku_online_logic(page: ft.Page, go_home_fn, send_action_fn, room_code: st
     online_main_content_column.controls.extend([
         ft.Row(
             [
-                ft.Text(f"🧩 سودوكو - غرفة: {room_code}", size=FONT_SIZE_TITLE, weight=ft.FontWeight.BOLD, expand=True, text_align=ft.TextAlign.CENTER),
+                ft.Text(f"غرفة: {room_code}", size=FONT_SIZE_MEDIUM, weight=ft.FontWeight.BOLD, expand=True, text_align=ft.TextAlign.CENTER),
                 ft.IconButton(ft.Icons.HOME_ROUNDED, tooltip="العودة للرئيسية", on_click=go_home_fn, icon_size=TITLE_ICON_SIZE)
             ], alignment=ft.MainAxisAlignment.SPACE_BETWEEN, vertical_alignment=ft.CrossAxisAlignment.CENTER
         ),
@@ -725,24 +741,26 @@ def sudoku_online_logic(page: ft.Page, go_home_fn, send_action_fn, room_code: st
         status_text_online,
         validation_status_online,
         ft.Divider(height=3, thickness=1),
-        ft.ResponsiveRow(
+        ft.Column(
             [
+                # Player list above grid
                 ft.Container(
-                    content=player_list_display_online, padding=8,
-                    border=ft.border.all(1, ft.Colors.with_opacity(0.5, ft.Colors.OUTLINE)),
-                    border_radius=STANDARD_BORDER_RADIUS, col={"xs": 12, "md": 4},
-                    margin=ft.margin.only(bottom=8 if page.width and page.width < 768 else 0, top=5)
+                    content=player_list_display_online,
+                    padding=5,
+                    alignment=ft.alignment.center
                 ),
-                ft.Container(
-                    content=ft.Column([
-                        sudoku_grid_container_online, ft.Container(height=10), 
-                        number_palette_online, ft.Container(height=10),
-                        action_area_online
-                    ], horizontal_alignment=ft.CrossAxisAlignment.CENTER, spacing=10),
-                    padding=CONTAINER_PADDING_NORMAL, col={"xs": 12, "md": 8},
-                    alignment=ft.alignment.top_center
-                )
-            ], vertical_alignment=ft.CrossAxisAlignment.START, alignment=ft.MainAxisAlignment.SPACE_AROUND, spacing=10, run_spacing=10
+                
+                # Game grid
+                sudoku_grid_container_online,
+                
+                # Number palette
+                number_palette_online,
+                
+                # Action buttons
+                action_area_online
+            ],
+            horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+            spacing=8
         )
     ])
     
