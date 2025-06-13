@@ -207,7 +207,7 @@ def sudoku_offline_logic(page: ft.Page, go_home_fn):
         offline_state["selected_cell_coord"] = None
         offline_state["conflicting_cells"] = set() 
         offline_state["step"] = "playing"
-        status_text_offline.value = f"مستوى الصعوبة: {difficulty}. بالتوفيق!"
+        status_text_offline.value = f"بالتوفيق"
         if difficulty != "easy":
             status_text_offline.value += " (مساعدة تظليل الأخطاء معطلة)"
         update_offline_ui_layout() 
