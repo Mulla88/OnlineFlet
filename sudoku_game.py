@@ -4,20 +4,20 @@ import time
 from sudoku_utils import get_sudoku_puzzle, check_solution_correctness, copy_board, validate_board_rules_and_get_conflicts, is_board_full
 
 # --- Sizing Constants ---
-FONT_SIZE_SMALL = 12
-FONT_SIZE_NORMAL = 14
-FONT_SIZE_MEDIUM = 16
-FONT_SIZE_LARGE = 18
-FONT_SIZE_XLARGE = 20 # For cell numbers
-FONT_SIZE_TITLE = 22
-BUTTON_HEIGHT_NORMAL = 40
+FONT_SIZE_SMALL = 10
+FONT_SIZE_NORMAL = 12
+FONT_SIZE_MEDIUM = 14
+FONT_SIZE_LARGE = 16
+FONT_SIZE_XLARGE = 18 # For cell numbers
+FONT_SIZE_TITLE = 18
+BUTTON_HEIGHT_NORMAL = 30
 CONTAINER_PADDING_NORMAL = ft.padding.symmetric(horizontal=5, vertical=3)
 STANDARD_BORDER_RADIUS = 8
 TITLE_ICON_SIZE = 26
-SUDOKU_CELL_SIZE = 38  # Default, will be adjusted for mobile
+SUDOKU_CELL_SIZE = 32  # Default, will be adjusted for mobile
 SUDOKU_GRID_BORDER_THICKNESS_NORMAL = 1
 SUDOKU_GRID_BORDER_THICKNESS_BOLD = 2.5 
-NUMBER_PALETTE_BUTTON_SIZE = 40
+NUMBER_PALETTE_BUTTON_SIZE = 35
 
 # --- OFFLINE MODE LOGIC ---
 def sudoku_offline_logic(page: ft.Page, go_home_fn):
